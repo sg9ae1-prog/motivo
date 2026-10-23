@@ -61,6 +61,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--teal-glow); out
 .prose p, .prose ul, .prose ol { margin: 0 0 1em; font-weight: 700; color: var(--text); }
 .prose li { margin-bottom: .4em; }
 .prose .meta { color: var(--text-muted); font-size: .9rem; }
+.prose .summary { margin: 24px 0 8px; border-color: rgba(45, 212, 191, .35); }
+.prose .summary h2 { margin-top: 0; font-size: 1.35rem; color: var(--teal-glow); }
+.prose .summary ul, .prose .summary p { margin-bottom: 0; }
 
 /* Footer */
 .site-footer { border-top: 1px solid var(--border); padding-block: 24px; color: var(--text-muted); font-size: .9rem; }
