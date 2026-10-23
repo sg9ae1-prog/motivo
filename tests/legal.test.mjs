@@ -1,20 +1,20 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fileExists, readPage } from "./pages.mjs";
+import { LEGAL_PATHS, fileExists, readPage } from "./pages.mjs";
 
 // Every phrase each legal page must carry: the spec's §6 items made checkable.
-const REQUIRED = {
-  "privacy/index.html": [
+const PHRASES = {
+  "privacy/": [
     "Magpy", "Israel", "contact@magpy.co", "Google", "Apple", "OpenRouter", "never stored",
     "never used to train", "YouTube", "RevenueCat", "Sentry", "Frankfurt", "early sign-up",
     "notifications", "13", "delete", "Last updated",
   ],
-  "terms/index.html": [
+  "terms/": [
     "Magpy", "Israel", "free trial", "renews automatically", "cancel", "App Store", "Google Play",
     "not medical", "13", "Last updated",
   ],
-  "support/index.html": ["contact@magpy.co", "restore purchases", "cancel", "sign in"],
-  "delete-account/index.html": ["Settings", "Delete account", "contact@magpy.co", "30 days"],
+  "support/": ["contact@magpy.co", "restore purchases", "cancel", "sign in"],
+  "delete-account/": ["Settings", "Delete account", "contact@magpy.co", "30 days"],
 };
 
 /** The visible text of a page: tags dropped, entities for spaces and arrows decoded, whitespace collapsed. */
@@ -26,17 +26,29 @@ function textOf(html) {
     .replace(/\s+/g, " ");
 }
 
-for (const [page, phrases] of Object.entries(REQUIRED)) {
+/** The phrases from the list that the text lacks, ignoring case. */
+function missingPhrases(text, phrases) {
+  const lower = text.toLowerCase();
+  return phrases.filter((p) => !lower.includes(p.toLowerCase()));
+}
+
+const pageOf = (path) => `${path}index.html`;
+
+test("every legal page has a phrase list", () => {
+  assert.deepEqual(Object.keys(PHRASES).sort(), [...LEGAL_PATHS].sort());
+});
+
+for (const path of LEGAL_PATHS) {
+  const page = pageOf(path);
   test(`${page} covers what the spec requires`, () => {
     assert.ok(fileExists(page), `${page}: missing`);
-    const text = textOf(readPage(page)).toLowerCase();
-    const missing = phrases.filter((p) => !text.includes(p.toLowerCase()));
+    const missing = missingPhrases(textOf(readPage(page)), PHRASES[path]);
     assert.deepEqual(missing, [], `${page} lacks: ${missing.join(", ")}`);
   });
 }
 
 test("the legal pages show a date", () => {
-  for (const page of Object.keys(REQUIRED)) {
+  for (const page of LEGAL_PATHS.map(pageOf)) {
     assert.ok(fileExists(page), `${page}: missing`);
     const text = textOf(readPage(page));
     const stamps = [...text.matchAll(/Last updated:?\s*(.{0,20})/gi)];
@@ -49,7 +61,6 @@ test("the legal pages show a date", () => {
 });
 
 test("the phrase check catches a missing phrase", () => {
-  const text = textOf("<p>Run by <b>Magpy</b></p>").toLowerCase();
-  assert.ok(text.includes("magpy"));
-  assert.ok(!text.includes("israel"));
+  const text = textOf("<p>Run by <b>MAGPY</b>, a company.</p>");
+  assert.deepEqual(missingPhrases(text, ["Magpy", "Israel"]), ["Israel"]);
 });
