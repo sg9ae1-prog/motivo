@@ -12,6 +12,9 @@ export const PAGES = [
   "support/index.html",
   "delete-account/index.html",
 ];
+/** Pages served from any URL depth (GitHub Pages' 404), so they link as /motivo/... instead of relatively. */
+export const SUBPATH_ABSOLUTE_PAGES = new Set(["404.html"]);
+export const SITE_BASE = "/motivo/";
 export const LEGAL_PATHS = ["privacy/", "terms/", "support/", "delete-account/"];
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -80,6 +83,12 @@ export function findBrokenLinks(page, html) {
   const broken = [];
   for (const link of extractLinks(html)) {
     if (isExternal(link) || link.startsWith("#")) continue;
+    if (SUBPATH_ABSOLUTE_PAGES.has(page) && link.startsWith(SITE_BASE)) {
+      const rest = link.slice(SITE_BASE.length).split("#")[0].split("?")[0];
+      const target = rest === "" || rest.endsWith("/") ? rest + "index.html" : rest;
+      if (!fileExists(target)) broken.push(`${page}: ${link} -> ${target}`);
+      continue;
+    }
     if (link.startsWith("/")) { broken.push(`${page}: root-absolute link ${link}`); continue; }
     const target = resolveInternal(page, link);
     if (target && !fileExists(target)) broken.push(`${page}: ${link} -> ${target}`);

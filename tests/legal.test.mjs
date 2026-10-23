@@ -14,7 +14,7 @@ const PHRASES = {
     "not medical", "13", "Last updated",
   ],
   "support/": ["contact@magpy.co", "restore purchases", "cancel", "sign in"],
-  "delete-account/": ["Settings", "Delete account", "contact@magpy.co", "30 days"],
+  "delete-account/": ["Settings", "Delete account", "contact@magpy.co", "30 days", "sign in with Apple once more"],
 };
 
 /** The visible text of a page: tags dropped, entities for spaces and arrows decoded, whitespace collapsed. */

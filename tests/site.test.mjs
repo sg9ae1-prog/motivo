@@ -4,7 +4,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import {
   PAGES, LEGAL_PATHS, ROOT, SKIP_DIRS, SITE_ORIGIN, listHtmlFiles, readPage,
-  extractLinks, findBrokenLinks, fileExists, footerOf,
+  extractLinks, findBrokenLinks, fileExists, footerOf, SUBPATH_ABSOLUTE_PAGES,
 } from "./pages.mjs";
 
 // Pages that exist today; checks other than "every page exists" cover these.
@@ -75,4 +75,66 @@ test("every page has a title, a description and a viewport tag", () => {
     assert.match(html, /<meta\s+name="description"\s+content="[^"]+"/i, `${page}: description`);
     assert.match(html, /<meta\s+name="viewport"\s+content="[^"]*width=device-width/i, `${page}: viewport`);
   }
+});
+
+test("every page carries the same relative favicon link as the landing page", () => {
+  const iconOf = (html) => html.match(/<link\s+rel="icon"\s+href="([^"]+)"/i)?.[1];
+  const landing = iconOf(readPage("index.html"));
+  assert.equal(landing, "assets/img/logo-mark.png");
+  for (const page of [...PAGES, "404.html"]) {
+    const icon = iconOf(readPage(page));
+    assert.ok(icon, `${page}: no <link rel="icon">`);
+    if (SUBPATH_ABSOLUTE_PAGES.has(page)) assert.equal(icon, "/motivo/" + landing, `${page}: icon`);
+    else assert.equal(icon, "../".repeat(page.split("/").length - 1) + landing, `${page}: icon`);
+  }
+});
+
+test("no page loads a script or stylesheet from another host", () => {
+  const offenders = [];
+  for (const page of present()) {
+    const html = readPage(page);
+    const tags = html.match(/<script\b[^>]*>|<link\b[^>]*rel="(?:stylesheet|preload|modulepreload)"[^>]*>/gi) ?? [];
+    for (const tag of tags) {
+      const url = tag.match(/\b(?:src|href)="([^"]+)"/i)?.[1];
+      if (url && /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(url) && !url.startsWith(SITE_ORIGIN)) offenders.push(`${page}: ${url}`);
+    }
+  }
+  assert.deepEqual(offenders, []);
+});
+
+test("the vendored libraries exist locally", () => {
+  for (const f of ["gsap.min.js", "ScrollTrigger.min.js", "lenis.min.js", "confetti.browser.min.js"]) {
+    assert.ok(fileExists("assets/vendor/" + f), f);
+  }
+});
+
+test("sharing: landing page has Open Graph and Twitter card tags, legal pages have title and description", () => {
+  const meta = (html, key) => html.match(new RegExp(`<meta\\s+(?:property|name)="${key}"\\s+content="([^"]*)"`, "i"))?.[1];
+  const landing = readPage("index.html");
+  const lede = landing.match(/<p class="lede[^"]*">([^<]+)<\/p>/)[1];
+  assert.equal(meta(landing, "og:title"), "Motivo — The friend who never gives up on you.");
+  assert.equal(meta(landing, "og:description"), lede);
+  assert.equal(meta(landing, "og:url"), SITE_ORIGIN + "/");
+  assert.equal(meta(landing, "og:image"), SITE_ORIGIN + "/assets/img/og.png");
+  assert.equal(meta(landing, "og:type"), "website");
+  assert.equal(meta(landing, "twitter:card"), "summary_large_image");
+  assert.equal(meta(landing, "twitter:image"), SITE_ORIGIN + "/assets/img/og.png");
+  assert.ok(fileExists("assets/img/og.png"));
+  const png = readFileSync(join(ROOT, "assets/img/og.png"));
+  assert.equal(png.readUInt32BE(16), 1200);
+  assert.equal(png.readUInt32BE(20), 630);
+  for (const page of PAGES.slice(1)) {
+    const html = readPage(page);
+    assert.ok(meta(html, "og:title"), `${page}: og:title`);
+    assert.ok(meta(html, "og:description"), `${page}: og:description`);
+  }
+});
+
+test("404 page: brand stylesheet, footer, a way home, absolute-on-subpath links", () => {
+  const html = readPage("404.html");
+  assert.match(html, /href="\/motivo\/assets\/site\.css"/);
+  assert.ok(footerOf(html), "footer");
+  assert.ok(extractLinks(html).includes("/motivo/"), "link home");
+  assert.deepEqual(findBrokenLinks("404.html", html), []);
+  assert.equal(findBrokenLinks("index.html", '<a href="/motivo/">x</a>').length, 1, "other pages may not use root-absolute links");
 });
