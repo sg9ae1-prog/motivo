@@ -258,7 +258,7 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .vs .notif h3 { font-size: 15px; margin: 6px 0 2px; }
 .vs .notif p { font-size: 12.5px; line-height: 1.3; }
 .vs .notif .acts { margin-top: 10px; gap: 6px; }
-.vs .nbtn { display: grid; place-items: center; min-height: 34px; border-radius: 10px; font-size: 13px; }
+.vs .nbtn { display: grid; place-items: center; min-height: 34px; border-radius: 10px; font-size: 13px; white-space: nowrap; }
 .vs .verdict { font: 800 clamp(20px, 5.4vw, 30px)/1.05 var(--font-head); min-height: 2.1em; } /* both boxes end on one line */
 .vs.bot .verdict { color: var(--text-muted); }
 .vs.mo .verdict { color: var(--teal-glow); }
