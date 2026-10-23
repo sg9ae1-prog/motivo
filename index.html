@@ -2,16 +2,289 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Motivo</title>
-  <meta name="description" content="Motivo is the friend who never gives up on you.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Motivo · The friend who never gives up on you</title>
+  <meta name="description" content="Whatever you dream of, one small win a day. And a party for every one. Motivo is your friendly guide. Be first to hear when it launches.">
+  <meta name="theme-color" content="#05080f">
+  <link rel="icon" href="assets/img/logo-mark.png">
   <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/landing.css">
 </head>
-<body>
+<body class="landing">
+  <div class="sky" id="sky" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+
   <header class="site-header"><div class="wrap">
     <a class="brand" href="./"><img src="assets/img/logo-mark.png" alt="" width="36" height="36">Motivo</a>
   </div></header>
-  <main class="wrap"><h1>Motivo</h1><p>TODO: landing page arrives in Task 4.</p></main>
+
+  <!-- The character: one live Motivo that travels with the reader from section to section. -->
+  <div id="mo" aria-hidden="true">
+    <div id="mo-squash"><div id="mo-tilt"><div id="mo-float"><div id="mo-jump">
+      <div id="mo-glow"></div><div id="mo-ring"></div>
+      <div id="mo-svg"></div>
+      <div id="mo-sheen"></div>
+    </div></div></div></div>
+  </div>
+  <div id="say" role="status" aria-live="polite"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <main>
+    <!-- 1–2. Hero, then Meet Motivo -->
+    <section id="hero" aria-label="Motivo">
+      <div class="stage">
+        <div class="anchor" data-anchor data-say-m="top" data-say-d="left" data-say="…so where do I even start?" data-say-meet="Hi! I'm Motivo."></div>
+        <span class="qm" aria-hidden="true" style="left:7%;top:13svh;--s:60px;--r:-14deg">?</span>
+        <span class="qm" aria-hidden="true" style="right:8%;top:11svh;--s:42px;--r:12deg;--d:-1s">?</span>
+        <span class="qm" aria-hidden="true" style="left:13%;top:33svh;--s:34px;--r:8deg;--d:-2s">?</span>
+        <span class="qm" aria-hidden="true" style="right:11%;top:30svh;--s:64px;--r:-10deg;--d:-.5s">?</span>
+        <div class="copy">
+          <div class="hook" id="hook">
+            <h1><span class="line">The friend who never <em class="a">gives up on you.</em></span></h1>
+            <p class="lede line">Whatever you dream of, one small win a day. And a party for every one.</p>
+            <form class="signup line" data-signup>
+              <label class="sr" for="email-hero">Your email</label>
+              <div class="signup-row">
+                <input id="email-hero" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
+                <button class="be-first" type="submit">Be first</button>
+              </div>
+              <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+              <p class="signup-status" data-status aria-live="polite"></p>
+              <p class="signup-note">We'll only write when Motivo launches.</p>
+            </form>
+          </div>
+          <div class="meet" id="meet">
+            <h2>Meet <em class="t">Motivo.</em></h2>
+            <p>Your friendly guide.</p>
+          </div>
+        </div>
+        <div class="scrollcue" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- 3. How it works -->
+    <section id="how" aria-label="How it works">
+      <div class="lw railwrap">
+        <div class="rail"><div class="anchor" data-anchor data-say-m="right" data-say-d="top"></div></div>
+        <div class="beats">
+          <div class="beat" data-look="#goalcard" data-say="What are we working on?">
+            <div class="kick"><b>1</b>Any goal</div>
+            <h2 data-split>Any goal. <em class="a">Really.</em></h2>
+            <div class="bcard goalcard" id="goalcard"><div class="lab">I want to</div><div class="typed"><span id="typed">learn guitar</span><i></i></div></div>
+          </div>
+          <div class="beat" data-look="#stepcard" data-say="Okay. Just these three. That's it.">
+            <div class="kick"><b>2</b>Today's step</div>
+            <h2 data-split>One small step. <em class="t">Today.</em></h2>
+            <div class="bcard stepcard" id="stepcard">
+              <div class="lab">TODAY'S CHORDS</div>
+              <h3>Three shapes. That's it.</h3>
+              <div class="chords" id="chords" role="img" aria-label="Chord shapes for G, C and D"></div>
+            </div>
+          </div>
+          <div class="beat" data-look="#notif" data-say="Tap it when you've done it.">
+            <div class="kick"><b>3</b>One tap</div>
+            <h2 data-split>Done? <em class="t">Tap.</em></h2>
+            <div class="notif" id="notif">
+              <div class="nh"><img src="assets/img/logo-mark.png" alt="">MOTIVO · NOW</div>
+              <h3>🌱 A small step is all it takes</h3>
+              <p>Practise G, C and D, 10 min. You've got this.</p>
+              <div class="acts"><button class="nbtn done" id="doneBtn" type="button">Done</button><button class="nbtn later" type="button">Not today</button></div>
+            </div>
+            <div class="hint">Go on, tap Done</div>
+          </div>
+          <div class="beat" id="party" data-say="YES! That's one!" data-mood="party">
+            <div class="kick"><b>4</b>Celebrate</div>
+            <div class="big" data-split>Done.<br><em class="a">Nice.</em></div>
+            <p class="sub">Every win gets a party. Tomorrow's step is already waiting.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. What it can do. Each figure is self-contained: its screen gets swapped for a screen recording later. -->
+    <section id="can-do" aria-labelledby="can-do-title">
+      <div class="lw">
+        <div class="shead">
+          <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Here's what I can do."></div>
+          <h2 id="can-do-title" data-split>Right there <em class="t">with you.</em></h2>
+        </div>
+        <div class="caps">
+          <figure class="cap" id="cap-talk">
+            <div class="phone"><div class="screen scr-talk" aria-hidden="true">
+              <div class="bar">Talk to Motivo live</div>
+              <div class="mini-mo" data-mini="talk"></div>
+              <div class="status">Listening…</div>
+              <div class="wave" data-wave></div>
+              <div class="bub mo">I'm right here with you! Let me know if you need help with any step.</div>
+              <div class="foot"><span class="pill">Tap to interrupt</span></div>
+            </div></div>
+            <figcaption><h3>Just talk</h3><p>Live voice chat. Say it out loud, and Motivo answers back.</p></figcaption>
+          </figure>
+          <figure class="cap" id="cap-guide">
+            <div class="phone"><div class="screen scr-guide" aria-hidden="true">
+              <div class="lab">Video Guide</div>
+              <div class="bar" style="text-align:left">Practise G, C and D</div>
+              <div class="video">
+                <svg class="neck" viewBox="0 0 160 90" preserveAspectRatio="none"><g stroke="#cfe0e6" stroke-width="1.2" opacity=".7"><line x1="0" y1="30" x2="160" y2="22"/><line x1="0" y1="40" x2="160" y2="34"/><line x1="0" y1="50" x2="160" y2="46"/><line x1="0" y1="60" x2="160" y2="58"/></g><g stroke="#8a6a4a" stroke-width="3"><line x1="40" y1="10" x2="40" y2="80"/><line x1="85" y1="8" x2="85" y2="82"/><line x1="128" y1="6" x2="128" y2="84"/></g><circle cx="62" cy="38" r="5" fill="#2dd4bf"/><circle cx="106" cy="48" r="5" fill="#f59e0b"/><circle cx="62" cy="57" r="5" fill="#2dd4bf"/></svg>
+                <div class="play"></div>
+              </div>
+              <div class="muted">Tap after each one that goes well.</div>
+              <div class="reps"><span class="on">G</span><span class="on">C</span><span>D</span></div>
+              <div class="tile">
+                <div style="font-weight:900;margin-bottom:8px">Did this video help?</div>
+                <div class="row2"><span class="pill on">It helped</span><span class="pill">Didn't help</span></div>
+              </div>
+              <div style="margin-top:auto"><span class="pill amber" style="width:100%">Ask Motivo</span></div>
+            </div></div>
+            <figcaption><h3>Shows you how</h3><p>A guide video for the exact step you're on.</p></figcaption>
+          </figure>
+          <figure class="cap" id="cap-gets">
+            <div class="phone"><div class="screen scr-gets" aria-hidden="true">
+              <div class="bar">Motivo</div>
+              <div class="tile">
+                <div class="mo-line"><img src="assets/img/logo-mark.png" alt=""><div>“Practise G, C and D” didn't happen. What got in the way?</div></div>
+                <div class="row2" style="margin-top:10px"><span class="pill">No time</span><span class="pill on">Too hard</span><span class="pill">Didn't feel like it</span><span class="pill">Something else</span></div>
+              </div>
+              <div class="tile" style="border-color:rgba(245,158,11,.35)">
+                <div class="lab">A gentler plan</div>
+                <div style="margin:8px 0 10px;font-weight:900">Take “Practise G, C and D” down to 7 minutes?</div>
+                <div class="row2"><span class="pill amber">Do it</span><span class="pill">Keep as is</span></div>
+              </div>
+              <div class="tile">
+                <div class="lab" style="color:var(--teal-glow)">Memory Vault</div>
+                <div class="muted" style="margin-top:6px">Motivo remembers this to support you better. You are always in control.</div>
+              </div>
+            </div></div>
+            <figcaption><h3>Gets you</h3><p>Remembers what you told it, and adapts when you miss a day.</p></figcaption>
+          </figure>
+          <figure class="cap" id="cap-studio">
+            <div class="phone"><div class="screen scr-studio" aria-hidden="true">
+              <div class="bar">Character Studio</div>
+              <div class="mini-mo" data-mini="studio"></div>
+              <div class="chiprow"><span class="pill">Classic Short</span><span class="pill on">Messy Bun</span><span class="pill">Curly Volume</span><span class="pill">Pixie Cut</span></div>
+              <div class="pers-mini">
+                <div><b>Supportive</b><small>I'll be here with you. You don't have to do it alone.</small></div>
+                <div><b>Understanding</b><small>I'll listen, understand you, and give you space to talk.</small></div>
+                <div class="on"><b>Leader</b><small>I'll help you take action and keep moving forward.</small></div>
+              </div>
+              <div style="margin-top:auto"><span class="pill amber" style="width:100%">Save My Look</span></div>
+            </div></div>
+            <figcaption><h3>Your Motivo, your rules</h3><p>Pick how it looks, and how it talks to you.</p></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Make it yours -->
+    <section id="yours" aria-labelledby="yours-title">
+      <div class="lw stagey">
+        <div class="ystrip"><div class="anchor" data-anchor data-say-m="right" data-say-d="top"></div></div>
+        <div class="col">
+          <div class="kick">Make it yours</div>
+          <h2 id="yours-title" data-split>Make it <em class="a">yours.</em></h2>
+          <p class="intro">Pick the look. Pick how it talks to you.</p>
+          <div class="panel">
+            <div class="prow"><h3>Hair</h3><div class="chips" data-ctl="hair"></div></div>
+            <div class="prow"><h3>Glasses</h3><div class="chips" data-ctl="accessory"></div></div>
+            <div class="prow"><h3>Shirt</h3><div class="chips" data-ctl="clothingColor"></div></div>
+            <div class="prow"><h3>Skin</h3><div class="chips" data-ctl="skinTone"></div></div>
+            <div class="prow"><h3>How it talks to you</h3><div class="pers" id="pers"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Not another chatbot -->
+    <section id="chatbot" aria-labelledby="chatbot-title">
+      <div class="lw">
+        <div class="shead">
+          <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="I'll come to you."></div>
+          <h2 id="chatbot-title" data-split>Not another <em class="t">chatbot.</em></h2>
+        </div>
+        <div class="versus">
+          <div class="vs bot">
+            <div class="who">A chatbot</div>
+            <div class="box" aria-hidden="true">
+              <div class="empty">…</div>
+              <div class="input"><i></i>Message</div>
+            </div>
+            <p class="verdict">Waits for you to ask. Then forgets.</p>
+          </div>
+          <div class="vs mo">
+            <div class="who">Motivo</div>
+            <div class="box" aria-hidden="true">
+              <div class="clock">16:30</div>
+              <div class="notif">
+                <div class="nh"><img src="assets/img/logo-mark.png" alt="">MOTIVO · NOW</div>
+                <h3>🌱 A small step is all it takes</h3>
+                <p>Practise G, C and D, 10 min. You've got this.</p>
+              </div>
+              <div class="notif">
+                <div class="nh"><img src="assets/img/logo-mark.png" alt="">MOTIVO · YESTERDAY</div>
+                <p>“Practise G, C and D” didn't happen. What got in the way?</p>
+              </div>
+            </div>
+            <p class="verdict">Comes to you.</p>
+          </div>
+        </div>
+        <p class="versus-line">A chatbot waits for you to ask, then forgets. Motivo comes to you, hands you today's step, notices when you skip, and celebrates when you do it.</p>
+      </div>
+    </section>
+
+    <!-- 7. Free, honestly -->
+    <section id="free" aria-labelledby="free-title">
+      <div class="lw">
+        <div class="shead">
+          <div class="anchor" data-anchor data-say-m="top" data-say-d="top"></div>
+          <h2 id="free-title" data-split>Free, <em class="a">honestly.</em></h2>
+        </div>
+        <div class="plans">
+          <div class="plan free"><h3>Free, forever</h3><ul><li>Goals</li><li>Plans</li><li>Habits</li><li>Streaks</li></ul></div>
+          <div class="plan pro"><h3>Pro adds</h3><ul><li>Unlimited chat</li><li>Voice</li><li>Memory</li><li>Guides</li><li>All looks</li></ul></div>
+        </div>
+        <p class="fine">Prices are shown in the store.</p>
+      </div>
+    </section>
+
+    <!-- 8. Your stuff stays yours -->
+    <section id="privacy" aria-labelledby="privacy-title">
+      <div class="lw privacy-grid">
+        <div class="shead">
+          <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Your goals live on your phone."></div>
+          <h2 id="privacy-title" data-split>Your stuff stays <em class="t">yours.</em></h2>
+        </div>
+        <div>
+          <ol class="promises">
+            <li>Your goals and chats live on your phone.</li>
+            <li>Messages pass through our server and are never stored there.</li>
+            <li>The AI companies we use promise not to train on them or keep them for their own use.</li>
+            <li>Your account is stored in the EU.</li>
+            <li>Delete your account any time.</li>
+          </ol>
+          <a class="readmore" href="privacy/">Read the privacy policy</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Get Motivo -->
+    <section id="get" aria-labelledby="get-title">
+      <div class="lw">
+        <div class="anchor" data-anchor data-say-m="top" data-say-d="top"></div>
+        <h2 id="get-title" data-split>Be <em class="a">first.</em></h2>
+        <p class="slede">Motivo isn't in the stores yet. Leave your email and hear the day it lands.</p>
+        <form class="signup" data-signup>
+          <label class="sr" for="email-get">Your email</label>
+          <div class="signup-row">
+            <input id="email-get" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
+            <button class="be-first" type="submit">Be first</button>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+          <p class="signup-status" data-status aria-live="polite"></p>
+          <p class="signup-note">We'll only write when Motivo launches.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
   <footer class="site-footer"><div class="wrap">
     <nav aria-label="Legal">
       <a href="privacy/">Privacy</a>
@@ -22,5 +295,12 @@
     </nav>
     <p>© Magpy</p>
   </div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-sPwMflxqfAN+Q5mvlkLmHiX3PORGbZSXHiSGPTXT9VHCD/AB+b+r+vJWsqprv+7k" crossorigin="anonymous"></script>
+  <script src="assets/bigheads.js"></script>
+  <script type="module" src="assets/landing.js"></script>
 </body>
 </html>

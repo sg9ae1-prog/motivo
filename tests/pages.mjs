@@ -15,7 +15,7 @@ export const PAGES = [
 export const LEGAL_PATHS = ["privacy/", "terms/", "support/", "delete-account/"];
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-export const SKIP_DIRS = new Set([".git", "node_modules", "_prototype"]);
+export const SKIP_DIRS = new Set([".git", "node_modules"]);
 
 /** Every HTML file in the repository, as paths relative to the root. */
 export function listHtmlFiles(dir = ROOT) {
