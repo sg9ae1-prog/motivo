@@ -1,0 +1,70 @@
+/* Motivo site: brand tokens, typography, header, footer, long-form text. Shared by every page. */
+@font-face { font-family: "Baloo 2"; font-weight: 800; font-style: normal; font-display: swap;
+  src: url("fonts/baloo-2-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 700; font-style: normal; font-display: swap;
+  src: url("fonts/nunito-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 900; font-style: normal; font-display: swap;
+  src: url("fonts/nunito-latin-900-normal.woff2") format("woff2"); }
+
+:root {
+  --navy-deep: #05080f;
+  --navy: #0a1526;
+  --teal-dark: #0d9488;
+  --teal: #14b8a6;
+  --teal-glow: #2dd4bf;
+  --amber: #f59e0b;
+  --amber-deep: #ea580c;
+  --card: #12212f;
+  --border: rgba(255, 255, 255, .08);
+  --text: #e6eef5;
+  --text-muted: #9fb2c3;
+  --gutter: 16px;
+  --font-head: "Baloo 2", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  background: var(--navy-deep) linear-gradient(180deg, var(--navy-deep), var(--navy)) fixed;
+  color: var(--text); font: 700 1rem/1.6 var(--font-body);
+  overflow-x: hidden;
+}
+main { flex: 1; }
+img { max-width: 100%; height: auto; }
+h1, h2, h3 { font-family: var(--font-head); font-weight: 800; line-height: 1.15; margin: 0 0 .5em; }
+h1 { font-size: clamp(2rem, 8vw, 3.25rem); }
+h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+a { color: var(--teal-glow); }
+a:hover { color: var(--amber); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--teal-glow); outline-offset: 3px; border-radius: 4px; }
+
+.wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding-inline: var(--gutter); }
+
+/* Header */
+.site-header { padding-block: 12px; border-bottom: 1px solid var(--border); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none;
+  font-family: var(--font-head); font-weight: 800; font-size: 1.4rem; }
+.brand img { width: 36px; height: 36px; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+.btn { display: inline-block; border: 0; border-radius: 999px; padding: 12px 24px; cursor: pointer;
+  font: 900 1rem var(--font-body); color: var(--navy-deep); text-decoration: none;
+  background: linear-gradient(135deg, var(--amber), var(--amber-deep)); }
+
+/* Long-form text (legal pages) */
+.prose { max-width: 68ch; margin: 0 auto; padding: 32px var(--gutter) 48px; line-height: 1.75; }
+.prose h1 { margin-bottom: .35em; }
+.prose h2 { margin-top: 2em; }
+.prose p, .prose ul, .prose ol { margin: 0 0 1em; font-weight: 700; color: var(--text); }
+.prose li { margin-bottom: .4em; }
+.prose .meta { color: var(--text-muted); font-size: .9rem; }
+
+/* Footer */
+.site-footer { border-top: 1px solid var(--border); padding-block: 24px; color: var(--text-muted); font-size: .9rem; }
+.site-footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 12px; }
+.site-footer p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

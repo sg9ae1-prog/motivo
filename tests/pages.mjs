@@ -1,0 +1,70 @@
+// Helper for the site tests: where the site lives, which pages it must have,
+// and how to read the links out of each page. Node built-ins only.
+import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
+import { join, dirname, resolve, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
+
+export const SITE_ORIGIN = "https://sg9ae.github.io/motivo";
+export const PAGES = [
+  "index.html",
+  "privacy/index.html",
+  "terms/index.html",
+  "support/index.html",
+  "delete-account/index.html",
+];
+export const LEGAL_PATHS = ["privacy/", "terms/", "support/", "delete-account/"];
+export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+const SKIP_DIRS = new Set([".git", "node_modules", "_prototype", "tests"]);
+
+/** Every HTML file in the repository, as paths relative to the root. */
+export function listHtmlFiles(dir = ROOT) {
+  const found = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!SKIP_DIRS.has(entry.name)) found.push(...listHtmlFiles(join(dir, entry.name)));
+    } else if (entry.name.endsWith(".html")) {
+      found.push(relative(ROOT, join(dir, entry.name)).split(sep).join("/"));
+    }
+  }
+  return found.sort();
+}
+
+export function readPage(page) {
+  return readFileSync(join(ROOT, page), "utf8");
+}
+
+/** Every href and src value in a page's HTML. */
+export function extractLinks(html) {
+  return [...html.matchAll(/\b(?:href|src)\s*=\s*"([^"]*)"/gi)].map((m) => m[1]);
+}
+
+export function isExternal(link) {
+  return /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(link);
+}
+
+/**
+ * Resolve an internal link found on `page` to a file path relative to the
+ * root. A trailing slash (or a folder) means that folder's index.html.
+ * Returns null for links that are not files (pure fragments).
+ */
+export function resolveInternal(page, link) {
+  const clean = link.split("#")[0].split("?")[0];
+  if (clean === "") return null;
+  const target = resolve(ROOT, dirname(page), clean);
+  const rel = relative(ROOT, target).split(sep).join("/");
+  if (clean.endsWith("/") || (existsSync(target) && statSync(target).isDirectory())) {
+    return (rel ? rel + "/" : "") + "index.html";
+  }
+  return rel;
+}
+
+export function fileExists(rel) {
+  return existsSync(join(ROOT, rel)) && statSync(join(ROOT, rel)).isFile();
+}
+
+/** The page's <footer> block, with relative depth ("../") removed so copies compare equal. */
+export function footerOf(html) {
+  const m = html.match(/<footer[\s\S]*?<\/footer>/i);
+  return m ? m[0].replace(/(?:\.\.\/)+/g, "").replace(/\s+/g, " ").trim() : null;
+}
