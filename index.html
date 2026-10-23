@@ -25,7 +25,7 @@
       <div id="mo-sheen"></div>
     </div></div></div></div>
   </div>
-  <div id="say" role="status" aria-live="polite"></div>
+  <div id="say" aria-hidden="true"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
   <main>
@@ -41,7 +41,7 @@
           <div class="hook" id="hook">
             <h1><span class="line">The friend who never <em class="a">gives up on you.</em></span></h1>
             <p class="lede line">Whatever you dream of, one small win a day. And a party for every one.</p>
-            <form class="signup line" data-signup>
+            <form class="signup line" data-signup method="post">
               <label class="sr" for="email-hero">Your email</label>
               <div class="signup-row">
                 <input id="email-hero" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
@@ -110,12 +110,11 @@
         <div class="caps">
           <figure class="cap" id="cap-talk">
             <div class="phone"><div class="screen scr-talk" aria-hidden="true">
-              <div class="bar">Talk to Motivo live</div>
               <div class="mini-mo" data-mini="talk"></div>
-              <div class="status">Listening…</div>
+              <div class="status">Tap to interrupt</div>
               <div class="wave" data-wave></div>
               <div class="bub mo">I'm right here with you! Let me know if you need help with any step.</div>
-              <div class="foot"><span class="pill">Tap to interrupt</span></div>
+              <div class="foot"><span class="pill">End</span></div>
             </div></div>
             <figcaption><h3>Just talk</h3><p>Live voice chat. Say it out loud, and Motivo answers back.</p></figcaption>
           </figure>
@@ -217,10 +216,7 @@
                 <div class="nh"><img src="assets/img/logo-mark.png" alt="">MOTIVO · NOW</div>
                 <h3>🌱 A small step is all it takes</h3>
                 <p>Practise G, C and D, 10 min. You've got this.</p>
-              </div>
-              <div class="notif">
-                <div class="nh"><img src="assets/img/logo-mark.png" alt="">MOTIVO · YESTERDAY</div>
-                <p>“Practise G, C and D” didn't happen. What got in the way?</p>
+                <div class="acts"><span class="nbtn done">Done</span><span class="nbtn later">Not today</span></div>
               </div>
             </div>
             <p class="verdict">Comes to you.</p>
@@ -271,7 +267,7 @@
         <div class="anchor" data-anchor data-say-m="top" data-say-d="top"></div>
         <h2 id="get-title" data-split>Be <em class="a">first.</em></h2>
         <p class="slede">Motivo isn't in the stores yet. Leave your email and hear the day it lands.</p>
-        <form class="signup" data-signup>
+        <form class="signup" data-signup method="post">
           <label class="sr" for="email-get">Your email</label>
           <div class="signup-row">
             <input id="email-get" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
@@ -296,6 +292,7 @@
     <p>© Magpy</p>
   </div></footer>
 
+  <script type="module" src="assets/signup-init.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>

@@ -38,7 +38,7 @@ h1 { font-size: clamp(2rem, 8vw, 3.25rem); }
 h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
 a { color: var(--teal-glow); }
 a:hover { color: var(--amber); }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--teal-glow); outline-offset: 3px; border-radius: 4px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--teal-glow); outline-offset: 3px; } /* the ring follows each element's own shape */
 
 .wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding-inline: var(--gutter); }
 

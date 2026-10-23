@@ -1,6 +1,5 @@
 // The landing page's live character and scroll choreography (from the approved prototype).
 // Libraries arrive as classic scripts before this module runs: gsap, ScrollTrigger, Lenis, confetti, Motivo.
-import { attachSignupForm } from "./signup.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -113,6 +112,7 @@ function target(a) {
     h.y -= Math.min(0, heroStage.getBoundingClientRect().top); r.y -= railTop;
     return { x: h.x + (r.x - h.x) * e, y: h.y + (r.y - h.y) * e, d: h.d + (r.d - h.d) * e };
   }
+  if (a === howA && railTop > 0) { const r = centre(howA.el); r.y -= railTop; return r; } // still mode: straight to its resting spot
   return centre(a.el);
 }
 
@@ -126,15 +126,18 @@ addEventListener("touchstart", (e) => { const t = e.touches[0]; if (t) setPointe
 addEventListener("touchmove", (e) => { const t = e.touches[0]; if (t) setPointer(t.clientX, t.clientY); }, { passive: true });
 const onOrient = (e) => { if (e.gamma != null) orient = { x: clamp(e.gamma / 30, -1, 1), y: clamp((e.beta - 50) / 30, -1, 1) }; };
 if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-  // iOS: ask once, on the first tap that isn't on a form or a link. Never on load.
+  // iOS: ask on the first click (a real tap, never a scroll swipe) that isn't on a form or a link. Never on load.
+  // If iOS refuses to show the question (it throws or rejects), listen again for the next tap.
+  const arm = () => addEventListener("click", ask, { once: true });
   const ask = (e) => {
-    if (e.target.closest("input, textarea, select, form, a")) return;
-    removeEventListener("touchend", ask); removeEventListener("click", ask);
-    DeviceOrientationEvent.requestPermission()
-      .then((answer) => { if (answer === "granted") addEventListener("deviceorientation", onOrient, { passive: true }); })
-      .catch(() => {});
+    if (e.target.closest("input, textarea, select, form, a")) { arm(); return; }
+    try {
+      DeviceOrientationEvent.requestPermission()
+        .then((answer) => { if (answer === "granted") addEventListener("deviceorientation", onOrient, { passive: true }); })
+        .catch(arm);
+    } catch { arm(); }
   };
-  if (!REDUCED) { addEventListener("touchend", ask, { passive: true }); addEventListener("click", ask); }
+  if (!REDUCED) arm();
 } else {
   addEventListener("deviceorientation", onOrient, { passive: true });
 }
@@ -195,7 +198,7 @@ function placeSay(a) {
   say.className = (say.classList.contains("on") ? "on " : "") + side + (say.classList.contains("amber") ? " amber" : "");
   say.style.setProperty("--tx", (cx - cl) + "px");
   // Hidden while its character is off screen.
-  const off = cy < -R || cy > innerHeight + R;
+  const off = cy - R < 0 || cy > innerHeight; // the head has left the screen
   say.style.visibility = off ? "hidden" : "visible";
   say.style.left = cl + "px"; say.style.top = clamp(t, 56, innerHeight - h - 8) + "px";
 }
@@ -346,14 +349,9 @@ $("#doneBtn").addEventListener("click", () => {
 });
 
 /* ---------------- early sign-up ---------------- */
+// The forms are wired by their own module; the character only reacts to the news.
 let signedUp = false;
-{
-  const forms = $$("[data-signup]");
-  forms.forEach((form) => attachSignupForm(form, {
-    group: forms,
-    onSignedUp: () => { signedUp = true; celebrate("You're on the list!"); },
-  }));
-}
+document.addEventListener("motivo:signedup", () => { signedUp = true; celebrate("You're on the list!"); });
 
 /* ---------------- choreography ---------------- */
 gsap.registerPlugin(ScrollTrigger);
@@ -390,7 +388,14 @@ if (!REDUCED) {
     .fromTo("#meet h2", { yPercent: 60, opacity: 0, rotation: 4 }, { yPercent: 0, opacity: 1, rotation: 0, duration: .25, ease: "back.out(1.6)" }, ">")
     .fromTo("#meet p", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .15 }, ">-.08")
     .to({}, { duration: .3 });
-  ScrollTrigger.create({ trigger: "#hero", start: "top top", end: "bottom bottom", onUpdate: (s) => { if (inHero()) setPhase(s.progress > .42 ? "meet" : "hook"); } });
+  const phaseST = ScrollTrigger.create({ trigger: "#hero", start: "top top", end: "bottom bottom", onUpdate: (s) => { if (inHero()) setPhase(s.progress > .42 ? "meet" : "hook"); } });
+  // While someone types in the hero form, the hero holds still: an iOS keyboard scrolling the page must not fade the form away.
+  const hook = $("#hook");
+  hook.addEventListener("focusin", () => { tl.scrollTrigger.disable(false); phaseST.disable(false); gsap.set(lines, { clearProps: "all" }); setPhase("hook"); });
+  hook.addEventListener("focusout", () => setTimeout(() => {
+    if (hook.contains(document.activeElement)) return;
+    tl.scrollTrigger.enable(); phaseST.enable(); ScrollTrigger.refresh();
+  }, 0));
   gsap.fromTo("#hero .anchor", { scale: 1 }, { scale: .86, ease: "none", scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom bottom", scrub: .7 } });
 } else {
   // Still: the same two moments, chosen by where the reader is.

@@ -36,8 +36,9 @@ export function messageFor(result) {
 
 /**
  * Wire a sign-up form: an email input, a hidden `website` input, a submit button and an
- * element with [data-status]. On success every form in `group` shows the thank-you;
- * on failure the typed email stays in the field.
+ * element with [data-status]. On success every form in `group` shows the thank-you, but only
+ * the submitted form announces it and takes focus; on failure the typed email stays in the field.
+ * `onSignedUp` is a courtesy hook: if it throws, the sign-up still shows as done.
  */
 export function attachSignupForm(form, { group = [form], onSignedUp = () => {}, fetchImpl } = {}) {
   const email = form.querySelector('input[type="email"]');
@@ -54,10 +55,14 @@ export function attachSignupForm(form, { group = [form], onSignedUp = () => {}, 
     button.disabled = false;
     if (result === "ok") {
       for (const f of group) {
+        const s = f.querySelector("[data-status]");
+        if (f !== form) s.setAttribute("aria-live", "off"); // one announcement, from the form the visitor used
         f.dataset.state = "done";
-        f.querySelector("[data-status]").textContent = messageFor("ok");
+        s.textContent = messageFor("ok");
       }
-      onSignedUp();
+      status.setAttribute("tabindex", "-1");
+      status.focus();
+      try { onSignedUp(); } catch { /* the reaction is decoration; the sign-up already succeeded */ }
     } else {
       form.dataset.state = result;
       status.textContent = messageFor(result);
