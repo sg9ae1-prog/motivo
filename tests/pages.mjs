@@ -15,7 +15,7 @@ export const PAGES = [
 export const LEGAL_PATHS = ["privacy/", "terms/", "support/", "delete-account/"];
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-const SKIP_DIRS = new Set([".git", "node_modules", "_prototype", "tests"]);
+export const SKIP_DIRS = new Set([".git", "node_modules", "_prototype"]);
 
 /** Every HTML file in the repository, as paths relative to the root. */
 export function listHtmlFiles(dir = ROOT) {
@@ -40,6 +40,7 @@ export function extractLinks(html) {
 }
 
 export function isExternal(link) {
+  if (link === SITE_ORIGIN || link.startsWith(SITE_ORIGIN + "/")) return false; // a self-link is internal
   return /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(link);
 }
 
@@ -49,6 +50,11 @@ export function isExternal(link) {
  * Returns null for links that are not files (pure fragments).
  */
 export function resolveInternal(page, link) {
+  if (link === SITE_ORIGIN || link.startsWith(SITE_ORIGIN + "/")) {
+    // Absolute self-link: the path after the origin is relative to the repo root.
+    link = link.slice(SITE_ORIGIN.length).replace(/^\//, "") || "./";
+    page = "index.html";
+  }
   const clean = link.split("#")[0].split("?")[0];
   if (clean === "") return null;
   const target = resolve(ROOT, dirname(page), clean);
@@ -67,4 +73,16 @@ export function fileExists(rel) {
 export function footerOf(html) {
   const m = html.match(/<footer[\s\S]*?<\/footer>/i);
   return m ? m[0].replace(/(?:\.\.\/)+/g, "").replace(/\s+/g, " ").trim() : null;
+}
+
+/** Problems with the internal links of one page's HTML (relative or SITE_ORIGIN self-links). */
+export function findBrokenLinks(page, html) {
+  const broken = [];
+  for (const link of extractLinks(html)) {
+    if (isExternal(link) || link.startsWith("#")) continue;
+    if (link.startsWith("/")) { broken.push(`${page}: root-absolute link ${link}`); continue; }
+    const target = resolveInternal(page, link);
+    if (target && !fileExists(target)) broken.push(`${page}: ${link} -> ${target}`);
+  }
+  return broken;
 }

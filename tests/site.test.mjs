@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import {
-  PAGES, LEGAL_PATHS, ROOT, listHtmlFiles, readPage, extractLinks,
-  isExternal, resolveInternal, fileExists, footerOf,
+  PAGES, LEGAL_PATHS, ROOT, SKIP_DIRS, SITE_ORIGIN, listHtmlFiles, readPage,
+  extractLinks, findBrokenLinks, fileExists, footerOf,
 } from "./pages.mjs";
 
 // Pages that exist today; checks other than "every page exists" cover these.
@@ -16,21 +16,20 @@ test("every page exists", () => {
 });
 
 test("every internal link resolves", () => {
-  const broken = [];
-  for (const page of present()) {
-    for (const link of extractLinks(readPage(page))) {
-      if (isExternal(link) || link.startsWith("#")) continue;
-      if (link.startsWith("/")) { broken.push(`${page}: root-absolute link ${link}`); continue; }
-      const target = resolveInternal(page, link);
-      if (target && !fileExists(target)) broken.push(`${page}: ${link} -> ${target}`);
-    }
-  }
+  const broken = present().flatMap((page) => findBrokenLinks(page, readPage(page)));
   assert.deepEqual(broken, []);
+});
+
+test("a self-link to a missing page is reported, and one to a real page is not", () => {
+  const bad = `<link rel="canonical" href="${SITE_ORIGIN}/no-such-page/">`;
+  assert.equal(findBrokenLinks("index.html", bad).length, 1);
+  assert.deepEqual(findBrokenLinks("index.html", `<a href="${SITE_ORIGIN}/assets/site.css">x</a>`), []);
+  assert.deepEqual(findBrokenLinks("index.html", `<a href="${SITE_ORIGIN}/">x</a>`), []);
 });
 
 function* allFiles(dir = ROOT) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
-    if ([".git", "node_modules", "_prototype"].includes(e.name)) continue;
+    if (SKIP_DIRS.has(e.name)) continue;
     const p = join(dir, e.name);
     if (e.isDirectory()) yield* allFiles(p);
     else if (/\.(html|css|js|mjs|md|json|txt)$/.test(e.name) && statSync(p).size < 2_000_000) yield p;
@@ -52,10 +51,10 @@ test("no placeholder text", () => {
 });
 
 test("every page carries the footer", () => {
-  const footers = new Map();
-  for (const page of present()) {
-    const html = readPage(page);
-    const footer = footerOf(html);
+  const footers = new Set();
+  for (const page of PAGES) {
+    assert.ok(fileExists(page), `${page}: missing`);
+    const footer = footerOf(readPage(page));
     assert.ok(footer, `${page}: no <footer>`);
     const hrefs = extractLinks(footer);
     for (const legal of LEGAL_PATHS) {
@@ -63,13 +62,14 @@ test("every page carries the footer", () => {
     }
     assert.ok(hrefs.includes("mailto:contact@magpy.co"), `${page}: footer lacks contact mailto`);
     assert.ok(footer.includes("© Magpy"), `${page}: footer lacks © Magpy`);
-    footers.set(page, footer);
+    footers.add(footer);
   }
-  assert.equal(new Set(footers.values()).size <= 1, true, "footers differ between pages");
+  assert.equal(footers.size, 1, "footers differ between pages");
 });
 
 test("every page has a title, a description and a viewport tag", () => {
-  for (const page of present()) {
+  for (const page of PAGES) {
+    assert.ok(fileExists(page), `${page}: missing`);
     const html = readPage(page);
     assert.match(html, /<title>[^<]+<\/title>/i, `${page}: title`);
     assert.match(html, /<meta\s+name="description"\s+content="[^"]+"/i, `${page}: description`);
