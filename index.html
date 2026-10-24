@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Motivo · The friend who never gives up on you</title>
-  <meta name="description" content="Whatever you dream of, one small win a day. And a party for every one. Motivo is your friendly guide. Be first to hear when it launches.">
+  <meta name="description" content="Helps you reach your goals, in the way that works best for you. Motivo is your friendly guide. Be first to hear when it launches.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Motivo">
   <meta property="og:title" content="Motivo — The friend who never gives up on you.">
-  <meta property="og:description" content="Whatever you dream of, one small win a day. And a party for every one.">
+  <meta property="og:description" content="Helps you reach your goals, in the way that works best for you.">
   <meta property="og:url" content="https://sg9ae.github.io/motivo/">
   <meta property="og:image" content="https://sg9ae.github.io/motivo/assets/img/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Motivo — The friend who never gives up on you.">
-  <meta name="twitter:description" content="Whatever you dream of, one small win a day. And a party for every one.">
+  <meta name="twitter:description" content="Helps you reach your goals, in the way that works best for you.">
   <meta name="twitter:image" content="https://sg9ae.github.io/motivo/assets/img/og.png">
   <meta name="theme-color" content="#05080f">
   <link rel="icon" href="assets/img/logo-mark.png">
@@ -24,10 +24,6 @@
 </head>
 <body class="landing">
   <div class="sky" id="sky" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
-
-  <header class="site-header"><div class="wrap">
-    <a class="brand" href="./"><img src="assets/img/logo-mark.png" alt="" width="36" height="36">Motivo</a>
-  </div></header>
 
   <!-- The character: one live Motivo that travels with the reader from section to section. -->
   <div id="mo" aria-hidden="true">
@@ -41,35 +37,40 @@
   <canvas id="confetti" aria-hidden="true"></canvas>
 
   <main>
-    <!-- 1–2. Hero, then Meet Motivo -->
-    <section id="hero" aria-label="Motivo">
-      <div class="stage">
-        <div class="anchor" data-anchor data-say-m="top" data-say-d="left" data-say="…so where do I even start?" data-say-meet="Hi! I'm Motivo."></div>
-        <span class="qm" aria-hidden="true" style="left:7%;top:13svh;--s:60px;--r:-14deg">?</span>
-        <span class="qm" aria-hidden="true" style="right:8%;top:11svh;--s:42px;--r:12deg;--d:-1s">?</span>
-        <span class="qm" aria-hidden="true" style="left:13%;top:33svh;--s:34px;--r:8deg;--d:-2s">?</span>
-        <span class="qm" aria-hidden="true" style="right:11%;top:30svh;--s:64px;--r:-10deg;--d:-.5s">?</span>
-        <div class="copy">
-          <div class="hook" id="hook">
-            <h1><span class="line">The friend who never <em class="a">gives up on you.</em></span></h1>
-            <p class="lede line">Whatever you dream of, one small win a day. And a party for every one.</p>
-            <form class="signup line" data-signup method="post">
-              <label class="sr" for="email-hero">Your email</label>
-              <div class="signup-row">
-                <input id="email-hero" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
-                <button class="be-first" type="submit">Be first</button>
-              </div>
-              <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-              <p class="signup-status" data-status aria-live="polite"></p>
-              <p class="signup-note">We'll only write when Motivo launches.</p>
-            </form>
-          </div>
-          <div class="meet" id="meet">
-            <h2>Meet <em class="t">Motivo.</em></h2>
-            <p>Your friendly guide.</p>
-          </div>
+    <!-- 1. Hero: the character wonders where to start. Question marks live inside its spot, so they never reach the copy. -->
+    <section id="hero" class="snap" aria-label="Motivo">
+      <div class="hero-char">
+        <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-think="Where do I start?">
+          <span class="qm" aria-hidden="true">?</span>
+          <span class="qm" aria-hidden="true">?</span>
+          <span class="qm" aria-hidden="true">?</span>
+          <span class="qm" aria-hidden="true">?</span>
         </div>
-        <div class="scrollcue" aria-hidden="true"></div>
+      </div>
+      <div class="hook" id="hook">
+        <div class="brand line"><img src="assets/img/logo-mark.png" alt="" width="36" height="36">Motivo</div>
+        <h1><span class="line">The friend who never <em class="a">gives up on you.</em></span></h1>
+        <p class="lede line">Helps you reach your goals, in the way that works best for you.</p>
+        <form class="signup line" data-signup method="post">
+          <label class="sr" for="email-hero">Your email</label>
+          <div class="signup-row">
+            <input id="email-hero" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
+            <button class="be-first" type="submit">Be first</button>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+          <p class="signup-status" data-status aria-live="polite"></p>
+          <p class="signup-note">We'll only write when Motivo launches.</p>
+        </form>
+      </div>
+      <div class="scrollcue" aria-hidden="true"></div>
+    </section>
+
+    <!-- 2. Meet Motivo -->
+    <section id="meet" class="snap" aria-labelledby="meet-title">
+      <div class="hero-char"><div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Hi! I'm Motivo."></div></div>
+      <div class="meet-copy">
+        <h2 id="meet-title">Meet <em class="t">Motivo.</em></h2>
+        <p>Your friendly guide.</p>
       </div>
     </section>
 
@@ -77,13 +78,13 @@
     <section id="how" aria-label="How it works">
       <div class="lw railwrap">
         <div class="rail"><div class="anchor" data-anchor data-say-m="right" data-say-d="top"></div></div>
-        <div class="beats">
-          <div class="beat" data-look="#goalcard" data-say="What are we working on?">
+        <div class="rail-screens">
+          <div class="beat snap" data-look="#goalcard" data-say="What are we working on?">
             <div class="kick"><b>1</b>Any goal</div>
             <h2 data-split>Any goal. <em class="a">Really.</em></h2>
             <div class="bcard goalcard" id="goalcard"><div class="lab">I want to</div><div class="typed"><span id="typed">learn guitar</span><i></i></div></div>
           </div>
-          <div class="beat" data-look="#stepcard" data-say="Okay. Just these three. That's it.">
+          <div class="beat snap" data-look="#stepcard" data-say="Okay. Just these three. That's it.">
             <div class="kick"><b>2</b>Today's step</div>
             <h2 data-split>One small step. <em class="t">Today.</em></h2>
             <div class="bcard stepcard" id="stepcard">
@@ -92,7 +93,7 @@
               <div class="chords" id="chords" role="img" aria-label="Chord shapes for G, C and D"></div>
             </div>
           </div>
-          <div class="beat" data-look="#notif" data-say="Tap it when you've done it.">
+          <div class="beat snap" data-look="#notif" data-say="Tap it when you've done it.">
             <div class="kick"><b>3</b>One tap</div>
             <h2 data-split>Done? <em class="t">Tap.</em></h2>
             <div class="notif" id="notif">
@@ -103,7 +104,7 @@
             </div>
             <div class="hint">Go on, tap Done</div>
           </div>
-          <div class="beat" id="party" data-say="YES! That's one!" data-mood="party">
+          <div class="beat snap" id="party" data-say="YES! That's one!" data-mood="party">
             <div class="kick"><b>4</b>Celebrate</div>
             <div class="big" data-split>Done.<br><em class="a">Nice.</em></div>
             <p class="sub">Every win gets a party. Tomorrow's step is already waiting.</p>
@@ -115,23 +116,22 @@
     <!-- 4. What it can do. Each figure is self-contained: its screen gets swapped for a screen recording later. -->
     <section id="can-do" aria-labelledby="can-do-title">
       <div class="lw">
-        <div class="shead">
-          <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Here's what I can do."></div>
+        <div class="snap capscreen">
           <h2 id="can-do-title" data-split>Right there <em class="t">with you.</em></h2>
-        </div>
-        <div class="caps">
           <figure class="cap" id="cap-talk">
-            <div class="phone"><div class="screen scr-talk" aria-hidden="true">
+            <div class="phone" data-fit="phones"><div class="screen scr-talk" aria-hidden="true">
               <div class="mini-mo" data-mini="talk"></div>
               <div class="status">Tap to interrupt</div>
               <div class="wave" data-wave></div>
               <div class="bub mo">I'm right here with you! Let me know if you need help with any step.</div>
               <div class="foot"><span class="pill">End</span></div>
             </div></div>
-            <figcaption><h3>Just talk</h3><p>Live voice chat. Say it out loud, and Motivo answers back.</p></figcaption>
+            <figcaption><div class="anchor" data-anchor data-say-m="none" data-say-d="top" data-say="Here's what I can do."></div><div><h3>Just talk</h3><p>Live voice chat. Say it out loud, and Motivo answers back.</p></div></figcaption>
           </figure>
+        </div>
+        <div class="snap capscreen">
           <figure class="cap" id="cap-guide">
-            <div class="phone"><div class="screen scr-guide" aria-hidden="true">
+            <div class="phone" data-fit="phones"><div class="screen scr-guide" aria-hidden="true">
               <div class="lab">Video Guide</div>
               <div class="bar" style="text-align:left">Practise G, C and D</div>
               <div class="video">
@@ -146,10 +146,12 @@
               </div>
               <div style="margin-top:auto"><span class="pill amber" style="width:100%">Ask Motivo</span></div>
             </div></div>
-            <figcaption><h3>Shows you how</h3><p>A guide video for the exact step you're on.</p></figcaption>
+            <figcaption><div class="anchor" data-anchor data-say-m="none" data-say-d="top"></div><div><h3>Shows you how</h3><p>A guide video for the exact step you're on.</p></div></figcaption>
           </figure>
+        </div>
+        <div class="snap capscreen">
           <figure class="cap" id="cap-gets">
-            <div class="phone"><div class="screen scr-gets" aria-hidden="true">
+            <div class="phone" data-fit="phones"><div class="screen scr-gets" aria-hidden="true">
               <div class="bar">Motivo</div>
               <div class="tile">
                 <div class="mo-line"><img src="assets/img/logo-mark.png" alt=""><div>“Practise G, C and D” didn't happen. What got in the way?</div></div>
@@ -165,10 +167,12 @@
                 <div class="muted" style="margin-top:6px">Motivo remembers this to support you better. You are always in control.</div>
               </div>
             </div></div>
-            <figcaption><h3>Gets you</h3><p>Remembers what you told it, and adapts when you miss a day.</p></figcaption>
+            <figcaption><div class="anchor" data-anchor data-say-m="none" data-say-d="top"></div><div><h3>Gets you</h3><p>Remembers what you told it, and adapts when you miss a day.</p></div></figcaption>
           </figure>
+        </div>
+        <div class="snap capscreen">
           <figure class="cap" id="cap-studio">
-            <div class="phone"><div class="screen scr-studio" aria-hidden="true">
+            <div class="phone" data-fit="phones"><div class="screen scr-studio" aria-hidden="true">
               <div class="bar">Character Studio</div>
               <div class="mini-mo" data-mini="studio"></div>
               <div class="chiprow"><span class="pill">Classic Short</span><span class="pill on">Messy Bun</span><span class="pill">Curly Volume</span><span class="pill">Pixie Cut</span></div>
@@ -179,7 +183,7 @@
               </div>
               <div style="margin-top:auto"><span class="pill amber" style="width:100%">Save My Look</span></div>
             </div></div>
-            <figcaption><h3>Your Motivo, your rules</h3><p>Pick how it looks, and how it talks to you.</p></figcaption>
+            <figcaption><div class="anchor" data-anchor data-say-m="none" data-say-d="top"></div><div><h3>Your Motivo, your rules</h3><p>Pick how it looks, and how it talks to you.</p></div></figcaption>
           </figure>
         </div>
       </div>
@@ -187,31 +191,37 @@
 
     <!-- 5. Make it yours -->
     <section id="yours" aria-labelledby="yours-title">
-      <div class="lw stagey">
-        <div class="ystrip"><div class="anchor" data-anchor data-say-m="right" data-say-d="top"></div></div>
-        <div class="col">
-          <div class="kick">Make it yours</div>
-          <h2 id="yours-title" data-split>Make it <em class="a">yours.</em></h2>
-          <p class="intro">Pick the look. Pick how it talks to you.</p>
-          <div class="panel">
-            <div class="prow"><h3>Hair</h3><div class="chips" data-ctl="hair"></div></div>
-            <div class="prow"><h3>Glasses</h3><div class="chips" data-ctl="accessory"></div></div>
-            <div class="prow"><h3>Shirt</h3><div class="chips" data-ctl="clothingColor"></div></div>
-            <div class="prow"><h3>Skin</h3><div class="chips" data-ctl="skinTone"></div></div>
-            <div class="prow"><h3>How it talks to you</h3><div class="pers" id="pers"></div></div>
+      <div class="lw railwrap">
+        <div class="rail"><div class="anchor" data-anchor data-say-m="right" data-say-d="top"></div></div>
+        <div class="rail-screens">
+          <div class="snap">
+            <div class="kick">Make it yours</div>
+            <h2 id="yours-title" data-split>Make it <em class="a">yours.</em></h2>
+            <p class="intro">Pick the look. Pick how it talks to you.</p>
+            <div class="panel" data-fit>
+              <div class="prow"><h3>Hair</h3><div class="chips" data-ctl="hair"></div></div>
+              <div class="prow"><h3>Glasses</h3><div class="chips" data-ctl="accessory"></div></div>
+              <div class="prow"><h3>Shirt</h3><div class="chips" data-ctl="clothingColor"></div></div>
+              <div class="prow"><h3>Skin</h3><div class="chips" data-ctl="skinTone"></div></div>
+            </div>
+          </div>
+          <div class="snap">
+            <div class="panel" data-fit>
+              <div class="prow"><h3>How it talks to you</h3><div class="pers" id="pers"></div></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 6. Not another chatbot -->
-    <section id="chatbot" aria-labelledby="chatbot-title">
+    <section id="chatbot" class="snap" aria-labelledby="chatbot-title">
       <div class="lw">
         <div class="shead">
           <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="I'll come to you."></div>
           <h2 id="chatbot-title" data-split>Not another <em class="t">chatbot.</em></h2>
         </div>
-        <div class="versus">
+        <div class="versus" data-fit>
           <div class="vs bot">
             <div class="who">A chatbot</div>
             <div class="box" aria-hidden="true">
@@ -239,7 +249,7 @@
     </section>
 
     <!-- 7. Free, honestly -->
-    <section id="free" aria-labelledby="free-title">
+    <section id="free" class="snap" aria-labelledby="free-title">
       <div class="lw">
         <div class="shead">
           <div class="anchor" data-anchor data-say-m="top" data-say-d="top"></div>
@@ -254,14 +264,14 @@
     </section>
 
     <!-- 8. Your stuff stays yours -->
-    <section id="privacy" aria-labelledby="privacy-title">
+    <section id="privacy" class="snap" aria-labelledby="privacy-title">
       <div class="lw privacy-grid">
         <div class="shead">
           <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Your goals live on your phone."></div>
           <h2 id="privacy-title" data-split>Your stuff stays <em class="t">yours.</em></h2>
         </div>
         <div>
-          <ol class="promises">
+          <ol class="promises" data-fit>
             <li>Your goals and chats live on your phone.</li>
             <li>Messages pass through our server and are never stored there.</li>
             <li>The AI companies we use promise not to train on them or keep them for their own use.</li>
@@ -274,7 +284,7 @@
     </section>
 
     <!-- 9. Get Motivo -->
-    <section id="get" aria-labelledby="get-title">
+    <section id="get" class="snap" aria-labelledby="get-title">
       <div class="lw">
         <div class="anchor" data-anchor data-say-m="top" data-say-d="top"></div>
         <h2 id="get-title" data-split>Be <em class="a">first.</em></h2>
@@ -305,9 +315,9 @@
   </div></footer>
 
   <script type="module" src="assets/signup-init.js"></script>
+  <script type="module" src="assets/fit-screens.js"></script>
   <script src="assets/vendor/gsap.min.js"></script>
   <script src="assets/vendor/ScrollTrigger.min.js"></script>
-  <script src="assets/vendor/lenis.min.js"></script>
   <script src="assets/vendor/confetti.browser.min.js"></script>
   <script src="assets/bigheads.js"></script>
   <script type="module" src="assets/landing.js"></script>

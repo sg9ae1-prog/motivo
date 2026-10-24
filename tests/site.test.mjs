@@ -103,7 +103,7 @@ test("no page loads a script or stylesheet from another host", () => {
 });
 
 test("the vendored libraries exist locally", () => {
-  for (const f of ["gsap.min.js", "ScrollTrigger.min.js", "lenis.min.js", "confetti.browser.min.js"]) {
+  for (const f of ["gsap.min.js", "ScrollTrigger.min.js", "confetti.browser.min.js"]) {
     assert.ok(fileExists("assets/vendor/" + f), f);
   }
 });

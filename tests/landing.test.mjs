@@ -11,10 +11,58 @@ const text = html
   .replace(/&amp;/g, "&").replace(/&rsquo;/g, "’").replace(/&hellip;/g, "…")
   .replace(/\s+/g, " ");
 
+const section = (id) => html.match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?</section>`, "i"))[0];
+const css = readFileSync(new URL("../assets/landing.css", import.meta.url), "utf8");
+const js = readFileSync(new URL("../assets/landing.js", import.meta.url), "utf8");
+
 test("hero copy is verbatim", () => {
   assert.ok(text.includes("The friend who never gives up on you."));
-  assert.ok(text.includes("Whatever you dream of, one small win a day. And a party for every one."));
-  assert.ok(html.includes("…so where do I even start?"), "speech bubble line");
+  assert.match(html, /<h1>[\s\S]*<em class="a">gives up on you\.<\/em>[\s\S]*<\/h1>/, "the accent stays on the end of the headline");
+  assert.ok(text.includes("Helps you reach your goals, in the way that works best for you."));
+  assert.doesNotMatch(text, /Whatever you dream of/, "the old sub-line is gone, share tags included");
+});
+
+test("the hero opens with a thought, not a spoken line", () => {
+  const anchor = section("hero").match(/<div class="anchor"[^>]*data-anchor[^>]*>/)[0];
+  assert.match(anchor, /data-think="Where do I start\?"/);
+  assert.doesNotMatch(anchor, /data-say=/);
+  assert.doesNotMatch(html, /so where do I even start/);
+  assert.match(css, /#say\.thought\b/, "the bubble has a thought variant");
+});
+
+test("one Motivo logo on the first screen, directly above the headline", () => {
+  assert.doesNotMatch(html, /<header\b/, "no top-bar brand to double the hero logo");
+  const hook = section("hero").match(/<div class="hook"[\s\S]*?<\/h1>/)[0];
+  assert.match(hook, /<div class="hook" id="hook">\s*<div class="brand[^"]*"><img src="assets\/img\/logo-mark\.png"[^>]*>Motivo<\/div>\s*<h1>/);
+});
+
+test("question marks live around the character, never loose in the hero", () => {
+  const hero = section("hero");
+  const qms = hero.match(/class="qm"/g) ?? [];
+  assert.ok(qms.length >= 3);
+  const around = hero.match(/<div class="anchor"[^>]*>([\s\S]*?)<\/div>/)[1];
+  assert.equal((around.match(/class="qm"/g) ?? []).length, qms.length, "every question mark sits inside the character's spot");
+});
+
+test("every section and every beat is one snapped screen", () => {
+  assert.match(css, /html\s*\{[^}]*scroll-snap-type:\s*y mandatory/);
+  assert.match(css, /\.snap\s*\{[^}]*height:\s*100svh[^}]*scroll-snap-align:\s*start/);
+  const ids = ["hero", "meet", "how", "can-do", "yours", "chatbot", "free", "privacy", "get"];
+  for (const id of ids) {
+    const s = section(id);
+    const open = s.match(/<section[^>]*>/)[0];
+    assert.ok(/class="[^"]*\bsnap\b/.test(open) || /class="[^"]*\bsnap\b/.test(s.slice(open.length)), `${id} has a snapped screen`);
+  }
+  for (const beat of html.match(/<div class="beat\b[^"]*"/g)) assert.match(beat, /\bsnap\b/, beat);
+  assert.equal((section("how").match(/class="beat\b/g) ?? []).length, 4);
+  assert.equal((section("can-do").match(/class="[^"]*\bsnap\b/g) ?? []).length, 4, "one phone per screen");
+  assert.equal((section("can-do").match(/<figure class="cap"/g) ?? []).length, 4);
+  assert.equal((section("yours").match(/class="[^"]*\bsnap\b/g) ?? []).length, 2, "the look, then how it talks");
+});
+
+test("native snapping owns the scroll: no smooth-scroll library", () => {
+  assert.doesNotMatch(html, /lenis/i);
+  assert.doesNotMatch(js, /Lenis/);
 });
 
 test("the headline never leads with AI", () => {
@@ -66,7 +114,6 @@ test("the speech bubble is decoration: screen readers hear the forms, not the ch
 });
 
 test("the phone screens and notifications only show text the app really shows", () => {
-  const section = (id) => html.match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?</section>`, "i"))[0];
   // An accessibility label is never visible text in the app.
   assert.doesNotMatch(section("can-do"), /Talk to Motivo live/);
   // "Not another chatbot" shows the activity reminder the app sends, with its real buttons.
@@ -79,7 +126,6 @@ test("the phone screens and notifications only show text the app really shows", 
 });
 
 test("landing styles never out-rank the shared ones, and focus rings keep each button's shape", () => {
-  const css = readFileSync(new URL("../assets/landing.css", import.meta.url), "utf8");
   assert.doesNotMatch(css, /^\.landing p\s*\{/m, "use :where(.landing) p so class rules win");
   const site = readFileSync(new URL("../assets/site.css", import.meta.url), "utf8");
   const focus = site.match(/[^}]*:focus-visible[^{]*\{[^}]*\}/g) ?? [];
@@ -88,16 +134,13 @@ test("landing styles never out-rank the shared ones, and focus rings keep each b
 });
 
 test("iOS tilt asks on a real tap (click), never on touchend, and listens again if the ask fails", () => {
-  const js = readFileSync(new URL("../assets/landing.js", import.meta.url), "utf8");
   assert.doesNotMatch(js, /touchend/);
   assert.match(js, /requestPermission\(\)[\s\S]{0,200}\.catch\(arm\)/);
   assert.match(js, /catch \{ arm\(\); \}/);
 });
 
 test("the hero form stays visible while it has focus", () => {
-  const css = readFileSync(new URL("../assets/landing.css", import.meta.url), "utf8");
   assert.match(css, /\.hook:focus-within \.line\s*\{[^}]*opacity:\s*1 !important[^}]*visibility:\s*visible !important[^}]*transform:\s*none !important/);
-  const js = readFileSync(new URL("../assets/landing.js", import.meta.url), "utf8");
   assert.match(js, /hook\.addEventListener\("focusin"/);
   assert.match(js, /hook\.addEventListener\("focusout"/);
 });

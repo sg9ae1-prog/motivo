@@ -20,10 +20,12 @@
 :where(.landing) p { margin: 0; } /* zero-specificity, so class rules such as .signup-note keep their spacing */
 .landing .site-footer { position: relative; z-index: 2; }
 
-/* Top bar: sits at the top of the page and scrolls away, so the character never meets the logo. */
-.landing .site-header { position: absolute; z-index: 40; top: 0; left: 0; right: 0; border: 0; padding-block: 14px; }
-.landing .site-header .wrap { max-width: 1320px; padding-inline: var(--gut); }
-.landing .brand img { filter: drop-shadow(0 0 12px rgba(45, 212, 191, .6)); }
+/* One screen per section: native mandatory snapping lands every screen whole. svh is the screen with Safari's bars showing,
+   so nothing is ever hidden behind them; when the bars hide, the next screen peeks in below. */
+html { scroll-snap-type: y mandatory; }
+.snap { position: relative; height: 100vh; height: 100svh; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center;
+  padding-block: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-bottom)); }
+[data-fit] { transform-origin: 50% 0; }
 
 /* Sky */
 .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -67,9 +69,19 @@
 #say::after { content: ""; position: absolute; width: 14px; height: 14px; background: #fff; transform: rotate(45deg); border-radius: 3px; }
 #say.top::after { bottom: -6px; left: clamp(18px, var(--tx), calc(100% - 18px)); margin-left: -7px; }
 #say.right::after { left: -6px; top: 50%; margin-top: -7px; }
-#say.left::after { right: -6px; top: 50%; margin-top: -7px; }
 #say.amber { background: #fff4dc; box-shadow: 0 14px 40px -12px rgba(0, 0, 0, .7), 0 0 0 3px rgba(245, 158, 11, .5); }
 #say.amber::after { background: #fff4dc; }
+/* A thought: a cloud with small bubbles trailing to the head, instead of a speech tail. The outline follows the whole cloud. */
+#say.thought { border-radius: 999px; padding: 12px 20px; box-shadow: none;
+  filter: drop-shadow(0 0 1.5px rgba(45, 212, 191, .95)) drop-shadow(0 0 1px rgba(45, 212, 191, .95)) drop-shadow(0 12px 16px rgba(0, 0, 0, .55)); }
+#say.thought::before { content: ""; position: absolute; inset: -9px 6px; z-index: -1;
+  background: radial-gradient(circle at 16% 34%, #fff 12px, transparent 12.5px), radial-gradient(circle at 38% 16%, #fff 15px, transparent 15.5px),
+    radial-gradient(circle at 64% 20%, #fff 14px, transparent 14.5px), radial-gradient(circle at 86% 38%, #fff 11px, transparent 11.5px),
+    radial-gradient(circle at 28% 84%, #fff 12px, transparent 12.5px), radial-gradient(circle at 58% 86%, #fff 13px, transparent 13.5px),
+    radial-gradient(circle at 82% 76%, #fff 10px, transparent 10.5px); }
+#say.thought::after { width: 13px; height: 13px; border-radius: 50%; transform: none; box-shadow: 7px 13px 0 -2.5px #fff; }
+#say.thought.top::after { bottom: -16px; margin-left: -9px; }
+#say.thought.right::after { left: -18px; top: 62%; margin-top: 0; box-shadow: -13px 8px 0 -2.5px #fff; }
 #confetti { position: fixed; inset: 0; z-index: 50; pointer-events: none; width: 100%; height: 100%; }
 .anchor { aspect-ratio: 1; border-radius: 50%; pointer-events: none; }
 
@@ -96,22 +108,28 @@
 .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------- 1–2. Hero and Meet Motivo ---------- */
-#hero { height: 280vh; }
-#hero .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-#hero .anchor { position: absolute; left: 50%; top: 15svh; width: min(52vw, 220px); margin-left: calc(min(52vw, 220px) / -2); }
-.qm { position: absolute; font: 800 var(--s, 56px)/1 var(--font-head); color: var(--amber); opacity: .85; text-shadow: 0 0 24px rgba(245, 158, 11, .5);
-  animation: qm 3s ease-in-out infinite; animation-delay: var(--d, 0s); will-change: transform; }
+/* The character's spot takes whatever height the copy leaves, with room above it for the thought. */
+.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 64px; }
+.hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the thought */ container-type: inline-size; }
+/* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the thought. */
+.qm { position: absolute; left: var(--x); top: var(--y); font: 800 calc(var(--s) * 100cqw)/1 var(--font-head); color: var(--amber); opacity: .85;
+  text-shadow: 0 0 24px rgba(245, 158, 11, .5); animation: qm 3s ease-in-out infinite; animation-delay: var(--d, 0s); will-change: transform; }
+.qm:nth-child(1) { --x: -40%; --y: 26%; --s: .26; --r: -14deg; }
+.qm:nth-child(2) { --x: 112%; --y: 16%; --s: .2; --r: 12deg; --d: -1s; }
+.qm:nth-child(3) { --x: -30%; --y: 66%; --s: .16; --r: 8deg; --d: -2s; }
+.qm:nth-child(4) { --x: 108%; --y: 58%; --s: .28; --r: -10deg; --d: -.5s; }
 @keyframes qm { 50% { transform: translateY(-12px) rotate(var(--r, 0deg)); } }
-#hero .copy { position: absolute; left: var(--gut); right: var(--gut); bottom: calc(4svh + env(safe-area-inset-bottom)); }
-.hook h1 { font-size: clamp(38px, 10.4vw, 54px); }
+.hook, .meet-copy { padding-inline: var(--gut); }
+.hook .brand { margin-bottom: 14px; }
+.hook .brand img { filter: drop-shadow(0 0 12px rgba(45, 212, 191, .6)); }
+.hook h1 { font-size: clamp(36px, 10.4vw, 54px); }
 .hook .line { display: block; }
-/* Typing in the hero form wins over the scroll animation: the form stays put and the next title stays out of its way. */
+/* Typing in the hero form wins over the scroll animation: the form stays put. */
 .hook:focus-within .line { opacity: 1 !important; visibility: visible !important; transform: none !important; }
-html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .hook .lede { font: 800 clamp(19px, 5.2vw, 26px)/1.15 var(--font-head); color: var(--text); margin: 12px 0 18px; max-width: 26ch; }
-.meet { position: absolute; left: 0; right: 0; bottom: 0; pointer-events: none; visibility: hidden; }
-.meet h2 { font-size: clamp(58px, 17vw, 84px); }
-.meet p { font: 800 clamp(24px, 6.6vw, 34px)/1.1 var(--font-head); color: var(--text-muted); margin-top: 12px; }
+.meet-copy { padding-block: 4svh 6svh; }
+.meet-copy h2 { font-size: clamp(58px, 17vw, 84px); }
+.meet-copy p { font: 800 clamp(24px, 6.6vw, 34px)/1.1 var(--font-head); color: var(--text-muted); margin-top: 12px; }
 .scrollcue { position: absolute; left: 50%; bottom: calc(1.4svh + env(safe-area-inset-bottom)); margin-left: -12px; width: 24px; height: 36px;
   border: 2px solid rgba(255, 255, 255, .35); border-radius: 14px; display: none; }
 .scrollcue::after { content: ""; position: absolute; left: 50%; top: 7px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px;
@@ -119,12 +137,15 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 @keyframes cue { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
 
 /* ---------- 3. How it works ---------- */
-#how { padding-top: 6vh; }
-.rail { position: sticky; top: 0; z-index: 5; height: 168px; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut);
+/* A rail holds the character still while the screens beside it snap past (How it works, Make it yours).
+   On a phone it is a band across the top that takes no room of its own: each screen leaves that band free. */
+.landing { --rail-h: 140px; }
+.rail { position: sticky; top: 0; z-index: 5; height: var(--rail-h); margin: 0 calc(var(--gut) * -1) calc(var(--rail-h) * -1); padding-inline: var(--gut);
   background: linear-gradient(180deg, var(--navy-deep) 86%, transparent); pointer-events: none; }
-.rail .anchor { position: absolute; left: calc(var(--gut) + 6px); top: 56px; width: 80px; }
-.beats { padding-bottom: 6vh; }
-.beat { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; padding: 8vh 0; }
+.rail .anchor { position: absolute; left: calc(var(--gut) + 6px); top: 40px; width: 80px; }
+.rail-screens > .snap { padding-top: calc(var(--rail-h) + 8px); }
+/* The band takes no room, so on the last screen it would ride on past the section; the wrapper clips it there. */
+.railwrap { overflow: clip; }
 .beat h2 { font-size: clamp(40px, 11.5vw, 72px); margin-bottom: 22px; }
 .beat p.sub { color: var(--text-muted); font-size: 18px; max-width: 34ch; margin-top: 20px; }
 .bcard { background: var(--card); border: 1px solid var(--border); border-radius: 26px; padding: 22px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8); }
@@ -156,20 +177,20 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .big { font: 800 clamp(64px, 24vw, 150px)/.85 var(--font-head); letter-spacing: -.04em; }
 
 /* Section heads with a spot for the character */
-.shead { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 28px; }
+.shead { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 24px; }
 .shead .anchor { flex: none; width: 76px; margin-bottom: 4px; }
 .shead h2 { font-size: clamp(44px, 12vw, 96px); }
 .slede { color: var(--text-muted); font-size: 18px; max-width: 36ch; margin: -10px 0 28px; }
 
 /* ---------- 4. What it can do ---------- */
-#can-do { padding: 14vh 0 6vh; }
-.caps { display: grid; gap: 56px; }
+.capscreen > h2 { font-size: clamp(40px, 11vw, 96px); margin-bottom: 18px; }
 .cap { margin: 0; display: grid; gap: 18px; justify-items: center; }
-.cap figcaption { justify-self: stretch; }
+.cap figcaption { justify-self: stretch; display: flex; align-items: center; gap: 14px; }
+.cap figcaption .anchor { flex: none; width: 64px; }
 .cap h3 { font: 800 clamp(30px, 8vw, 40px)/1 var(--font-head); }
 .cap figcaption p { color: var(--text-muted); font-size: 17px; margin-top: 6px; max-width: 30ch; }
-.cap:nth-child(odd) .phone { transform: rotate(-2deg); }
-.cap:nth-child(even) .phone { transform: rotate(2deg); }
+.capscreen:nth-child(odd) .phone { transform: rotate(-2deg); }
+.capscreen:nth-child(even) .phone { transform: rotate(2deg); }
 
 /* A phone frame; the screen inside is one self-contained block, swapped for a recording later. */
 .phone { position: relative; width: min(74vw, 280px); aspect-ratio: 9 / 18.6; border-radius: 42px; padding: 9px; background: #1b2731;
@@ -218,13 +239,9 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .pers-mini small { font-size: 11px; opacity: .85; }
 
 /* ---------- 5. Make it yours ---------- */
-#yours { padding: 12vh 0 8vh; }
-#yours h2 { font-size: clamp(46px, 13vw, 110px); }
-#yours .intro { color: var(--text-muted); font-size: 18px; margin-top: 16px; max-width: 34ch; }
-.ystrip { position: sticky; top: 0; z-index: 5; height: 200px; margin: 18px calc(var(--gut) * -1) 0;
-  background: linear-gradient(180deg, var(--navy-deep) 88%, transparent); pointer-events: none; }
-.ystrip .anchor { position: absolute; left: calc(var(--gut) + 8px); top: 50px; width: 104px; }
-.panel { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 20px 18px 22px; display: grid; gap: 16px; margin-top: 8px; }
+#yours h2 { font-size: clamp(40px, 11vw, 110px); }
+#yours .intro { color: var(--text-muted); font-size: 18px; margin-top: 10px; max-width: 34ch; }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 18px 18px 20px; display: grid; gap: 14px; margin-top: 16px; }
 .prow h3 { font: 900 11px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 9px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { min-height: 42px; padding: 0 16px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1.5px solid transparent;
@@ -241,11 +258,10 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .pers .chip[aria-pressed="true"] { background: var(--c); border-color: #fff; }
 
 /* ---------- 6. Not another chatbot ---------- */
-#chatbot { padding: 14vh 0 8vh; }
 .versus { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch; }
 .vs { display: flex; flex-direction: column; gap: 12px; }
 .vs .who { font: 900 11px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); }
-.vs .box { flex: 1; min-height: 300px; border-radius: 24px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.vs .box { flex: 1; min-height: 240px; border-radius: 24px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
 .vs.bot .box { background: rgba(255, 255, 255, .03); border: 1.5px dashed rgba(255, 255, 255, .14); }
 .vs.bot .empty { flex: 1; display: grid; place-items: center; text-align: center; color: #56697a; font-size: 13px; }
 .vs.bot .input { display: flex; align-items: center; height: 40px; border-radius: 999px; padding: 0 14px; background: rgba(255, 255, 255, .06); color: #6f8494; font-size: 13px; }
@@ -262,10 +278,9 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .vs .verdict { font: 800 clamp(20px, 5.4vw, 30px)/1.05 var(--font-head); min-height: 2.1em; } /* both boxes end on one line */
 .vs.bot .verdict { color: var(--text-muted); }
 .vs.mo .verdict { color: var(--teal-glow); }
-.versus-line { margin-top: 26px; font-size: 18px; max-width: 46ch; color: var(--text); }
+.versus-line { margin-top: 20px; font-size: 18px; max-width: 46ch; color: var(--text); }
 
 /* ---------- 7. Free, honestly ---------- */
-#free { padding: 14vh 0 8vh; }
 .plans { display: grid; gap: 34px; }
 .plan h3 { font: 900 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; margin-bottom: 12px; }
 .plan.free h3 { color: var(--teal-glow); }
@@ -277,17 +292,17 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 .fine { margin-top: 30px; color: var(--text-muted); font-size: 16px; }
 
 /* ---------- 8. Your stuff stays yours ---------- */
-#privacy { padding: 14vh 0 8vh; }
 .promises { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; max-width: 760px; counter-reset: p; }
-.promises li { counter-increment: p; display: grid; grid-template-columns: 44px 1fr; gap: 6px; padding: 16px 0; border-top: 1px solid var(--border);
+.promises li { counter-increment: p; display: grid; grid-template-columns: 44px 1fr; gap: 6px; padding: 12px 0; border-top: 1px solid var(--border);
   font: 800 clamp(20px, 5.4vw, 28px)/1.2 var(--font-head); letter-spacing: -.01em; }
 .promises li::before { content: counter(p, decimal-leading-zero); font: 900 13px/2 var(--font-body); color: var(--teal-glow); letter-spacing: .08em; }
 .promises li:last-child { border-bottom: 1px solid var(--border); }
 .readmore { display: inline-block; margin-top: 24px; font-weight: 900; font-size: 17px; }
 
 /* ---------- 9. Get Motivo ---------- */
-#get { padding: 12vh 0 16vh; text-align: center; }
-#get .anchor { width: min(46vw, 190px); margin: 0 auto 36px; }
+/* The last screen shares the viewport with the footer. */
+#get { height: calc(100svh - var(--foot-h, 0px)); text-align: center; }
+#get .anchor { width: min(46vw, 190px, 26svh); margin: 0 auto 28px; }
 #get h2 { font-size: clamp(64px, 18vw, 150px); }
 #get .slede { margin: 14px auto 26px; }
 #get .signup { margin: 0 auto; text-align: left; }
@@ -295,57 +310,53 @@ html:not(.rm) .hook:focus-within ~ .meet { visibility: hidden !important; }
 
 /* ---------- Desktop ---------- */
 @media (min-width: 900px) {
-  .landing .site-header { padding-block: 22px; }
-  .landing .brand { font-size: 1.75rem; }
-  .landing .brand img { width: 42px; height: 42px; }
-  #hero .anchor { left: auto; right: calc(var(--gut) + 3vw); top: 50%; margin: 0; width: min(32vw, 460px); transform: translateY(-50%); }
-  #hero .copy { left: var(--gut); right: auto; width: 54%; bottom: auto; top: 50%; transform: translateY(-50%); }
-  #hero .meet { top: 50%; bottom: auto; transform: translateY(-50%); }
+  /* Hero and Meet share one layout, so the character stays put while the words change. */
+  #hero, #meet { flex-direction: row-reverse; align-items: center; padding-inline: var(--gut); }
+  .hook, .meet-copy { flex: 0 0 54%; padding: 0; }
+  .hero-char { align-self: stretch; padding-top: 0; }
+  .hero-char .anchor { width: min(32vw, 460px, 100cqh - 160px); }
+  .qm:nth-child(1) { --x: 2%; --y: -24%; --s: .14; }
+  .qm:nth-child(2) { --x: 92%; --y: -14%; --s: .1; }
+  .qm:nth-child(3) { --x: 104%; --y: 46%; --s: .09; }
+  .qm:nth-child(4) { --x: 90%; --y: 94%; --s: .14; }
+  .hook .brand { font-size: 1.75rem; margin-bottom: 22px; }
+  .hook .brand img { width: 42px; height: 42px; }
   .hook h1 { font-size: clamp(60px, 5.8vw, 104px); }
   .hook .lede { font-size: clamp(24px, 2vw, 32px); margin: 20px 0 30px; }
-  .meet h2 { font-size: clamp(100px, 10vw, 180px); }
-  .meet p { font-size: clamp(32px, 2.6vw, 44px); }
+  .meet-copy h2 { font-size: clamp(100px, 10vw, 180px); }
+  .meet-copy p { font-size: clamp(32px, 2.6vw, 44px); }
   .scrollcue { display: block; }
   .railwrap { display: grid; grid-template-columns: minmax(300px, 40%) 1fr; gap: 4vw; align-items: start; }
-  .rail { height: 100svh; top: 0; margin: 0; padding: 0; background: none; }
+  .rail { height: 100vh; height: 100svh; margin: 0; padding: 0; background: none; }
   .rail .anchor { left: 50%; top: 50%; width: min(24vw, 340px); transform: translate(-50%, -50%); }
-  .beats { padding-right: 3vw; max-width: 640px; }
-  .beat { min-height: 92vh; }
+  .rail-screens { padding-right: 3vw; max-width: 640px; }
+  .rail-screens > .snap { padding-top: max(20px, env(safe-area-inset-top)); }
   .beat h2 { font-size: clamp(54px, 5.6vw, 96px); }
+  #yours .rail .anchor { width: min(30vw, 430px); }
   .shead .anchor { width: 120px; }
-  .caps { grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; }
-  .cap:nth-child(2) { margin-top: 70px; }
-  .cap:nth-child(3) { margin-top: 20px; }
-  .cap:nth-child(4) { margin-top: 90px; }
-  .phone { width: 100%; max-width: 290px; }
-  .stagey { display: grid; grid-template-columns: 1fr minmax(420px, 520px); gap: 5vw; align-items: center; min-height: 100vh; }
-  .ystrip { position: static; height: auto; margin: 0; background: none; align-self: stretch; }
-  .ystrip .anchor { position: sticky; left: auto; top: calc(50vh - min(15vw, 215px)); width: min(30vw, 430px); margin: 0 auto; }
-  .stagey .col { order: 2; }
+  .capscreen { align-items: center; }
+  .capscreen > h2 { align-self: stretch; max-width: 1100px; margin-inline: auto; width: 100%; }
+  .cap { grid-template-columns: auto minmax(0, 460px); gap: 6vw; align-items: center; }
+  .cap figcaption { flex-direction: column; align-items: flex-start; }
+  .cap figcaption .anchor { width: 150px; }
+  .cap h3 { font-size: clamp(40px, 3.6vw, 60px); }
+  .cap figcaption p { font-size: 22px; }
+  .phone { width: 290px; }
   .panel { padding: 26px 26px 28px; gap: 20px; }
   .versus { max-width: 900px; gap: 24px; }
-  .vs .box { min-height: 380px; padding: 22px; }
+  .vs .box { min-height: 340px; padding: 22px; }
   .vs .notif { padding: 14px 16px; }
   .vs .notif h3 { font-size: 19px; }
   .vs .notif p { font-size: 14.5px; }
   .vs.mo .clock { font-size: 56px; }
   .plans { grid-template-columns: 1fr 1fr; gap: 6vw; max-width: 1100px; }
   .plan ul { font-size: clamp(40px, 4vw, 64px); }
-  .privacy-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 6vw; align-items: start; }
+  .privacy-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 6vw; align-items: center; }
   .privacy-grid .shead { flex-direction: column; align-items: flex-start; }
-  #get .anchor { width: min(20vw, 260px); }
+  #get .anchor { width: min(20vw, 260px, 26svh); }
 }
 @media (max-width: 899px) { #say { font-size: 14px; } }
 
-/* ---------- Reduced motion: every section a finished still ---------- */
-.rm #hero { height: auto; }
-.rm #hero .stage { position: relative; height: auto; overflow: visible; padding: calc(15svh + min(52vw, 220px) + 28px) 0 6vh; }
-.rm #hero .copy { position: relative; left: auto; right: auto; bottom: auto; top: auto; transform: none; margin-inline: var(--gut); }
-.rm .meet { position: relative; visibility: visible; transform: none !important; top: auto; bottom: auto; margin-top: 12vh; pointer-events: auto; }
+/* ---------- Reduced motion: the same snapped screens, each a finished still ---------- */
 .rm .qm, .rm .scrollcue, .rm .sky b, .rm #mo-float, .rm #mo-glow, .rm .wave i, .rm .goalcard .typed i, .rm .vs.bot .input i { animation: none !important; }
 .rm .cap .wave i { transform: scaleY(.7); }
-@media (min-width: 900px) {
-  .rm #hero .stage { padding: 0; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
-  .rm #hero .copy { width: 54%; margin-top: 18vh; }
-  .rm .meet { margin-top: 26vh; margin-bottom: 18vh; }
-}

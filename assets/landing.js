@@ -1,5 +1,6 @@
 // The landing page's live character and scroll choreography (from the approved prototype).
-// Libraries arrive as classic scripts before this module runs: gsap, ScrollTrigger, Lenis, confetti, Motivo.
+// Libraries arrive as classic scripts before this module runs: gsap, ScrollTrigger, confetti, Motivo.
+// Scrolling itself is native: the page snaps one screen at a time, and nothing here smooths or hijacks it.
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -8,7 +9,6 @@ const params = new URLSearchParams(location.search);
 if (matchMedia("(prefers-reduced-motion: reduce)").matches || params.has("rm")) document.documentElement.classList.add("rm");
 const REDUCED = document.documentElement.classList.contains("rm");
 const desktop = () => innerWidth >= 900;
-const fine = matchMedia("(pointer:fine)").matches;
 
 /* ---------------- stars ---------------- */
 {
@@ -72,48 +72,48 @@ function face(name) {
 }
 draw(); face("worried");
 
-/* ---------------- speech bubble ---------------- */
+/* ---------------- speech and thought bubble ---------------- */
 const say = $("#say");
 let sayText = "", sayTimer;
-function speak(text, amber) {
+/** Show a line. `thought` draws it as a thought cloud instead of speech; `amber` tints it. */
+function speak(text, { amber = false, thought = false } = {}) {
   if (text === sayText) return;
   sayText = text;
   clearTimeout(sayTimer);
-  say.classList.toggle("amber", !!amber);
   if (!text) { say.classList.remove("on"); return; }
   say.classList.remove("on");
-  sayTimer = setTimeout(() => { say.textContent = text; say.classList.add("on"); }, say.textContent && !REDUCED ? 120 : 0);
+  sayTimer = setTimeout(() => {
+    say.textContent = text;
+    say.classList.toggle("amber", amber);
+    say.classList.toggle("thought", thought);
+    say.classList.add("on");
+  }, say.textContent && !REDUCED ? 120 : 0);
 }
 
 /* ---------------- placement: follow the active anchor ---------------- */
 const mo = $("#mo"), squash = $("#mo-squash"), tilt = $("#mo-tilt"), jump = $("#mo-jump");
 const W = 520;
-const anchors = $$("[data-anchor]").map((el) => ({ el, sec: el.closest("section") }));
-const heroA = anchors.find((a) => a.sec.id === "hero"), howA = anchors.find((a) => a.sec.id === "how");
+// Each spot belongs to the stretch of page where it is in charge: its own screen, or a whole section when it sits on a rail.
+const anchors = $$("[data-anchor]").map((el) => {
+  const rail = el.closest(".rail");
+  return { el, rail, sec: el.closest("section"), zone: rail ? el.closest("section") : el.closest(".snap") || el.closest("section") };
+});
 const st = { x: 0, y: 0, s: 1, init: false };
 let lastScroll = scrollY, vScroll = 0;
 function active() {
   const mid = innerHeight * .5;
-  for (const a of anchors) { const r = a.sec.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) return a; }
+  for (const a of anchors) { const r = a.zone.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) return a; }
   return anchors[scrollY < innerHeight ? 0 : anchors.length - 1];
 }
 let curAnchor = anchors[0];
 const centre = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, d: r.width }; };
 
-/** Where the character should be. While the hero lets go, it glides straight from the hero spot to the rail spot in step with
- *  the scroll. Both ends are measured where their sticky holders will rest, so the path never dips and climbs back. */
-const heroStage = $("#hero .stage"), rail = $(".rail");
+/** Where the character should be. A spot on a rail that has not reached the top yet is measured where the rail will rest,
+ *  so the character goes straight there instead of riding in with the section. */
 function target(a) {
-  const howTop = howA.sec.getBoundingClientRect().top, railTop = rail.getBoundingClientRect().top;
-  if (!REDUCED && howTop < innerHeight && railTop > 0 && (a === heroA || a === howA)) {
-    const p = clamp((innerHeight - howTop) / (innerHeight * .8), 0, 1);
-    const e = p * p * (3 - 2 * p);
-    const h = centre(heroA.el), r = centre(howA.el);
-    h.y -= Math.min(0, heroStage.getBoundingClientRect().top); r.y -= railTop;
-    return { x: h.x + (r.x - h.x) * e, y: h.y + (r.y - h.y) * e, d: h.d + (r.d - h.d) * e };
-  }
-  if (a === howA && railTop > 0) { const r = centre(howA.el); r.y -= railTop; return r; } // still mode: straight to its resting spot
-  return centre(a.el);
+  const c = centre(a.el);
+  if (a.rail) { const top = a.rail.getBoundingClientRect().top; if (top > 0) c.y -= top; }
+  return c;
 }
 
 /* ---------------- gaze: finger, mouse, tilt, or the thing being talked about ---------------- */
@@ -184,23 +184,23 @@ function frame() {
 function placeSay(a) {
   if (!sayText) return;
   let side = (desktop() ? a.el.dataset.sayD : a.el.dataset.sayM) || "top";
+  if (side === "none") { say.style.visibility = "hidden"; return; } // a spot with no room for a bubble on this layout
   const w = say.offsetWidth, h = say.offsetHeight;
   const S = st.s * W, R = S * .332, cx = st.x, cy = st.y;
-  if (side === "top" && cy - .4 * S - h - 16 < 56) { // no room above: go beside, but only where it fits clear of the face
-    if (cx + R + 16 + w < innerWidth - 12) side = "right";
-    else if (cx - R - 16 - w > 12) side = "left";
-  }
+  const gap = say.classList.contains("thought") ? 26 : 16; // a thought needs room for its trailing bubbles
+  // No room above the head: beside it would sit on the copy, so the line stays unsaid on this layout.
+  if (side === "top" && cy - .4 * S - h - gap < 12) { say.style.visibility = "hidden"; return; }
   let l, t;
-  if (side === "top") { l = cx - w / 2; t = cy - .4 * S - h - 16; }
-  else if (side === "right") { l = cx + R + 16; t = cy - h / 2; }
-  else { l = cx - R - 16 - w; t = cy - h / 2; }
+  if (side === "top") { l = cx - w / 2; t = cy - .4 * S - h - gap; }
+  else { l = cx + R + gap; t = cy - h / 2; } // "right"
   const cl = clamp(l, 12, innerWidth - w - 12);
-  say.className = (say.classList.contains("on") ? "on " : "") + side + (say.classList.contains("amber") ? " amber" : "");
+  say.classList.remove("top", "right");
+  say.classList.add(side);
   say.style.setProperty("--tx", (cx - cl) + "px");
   // Hidden while its character is off screen.
   const off = cy - R < 0 || cy > innerHeight; // the head has left the screen
   say.style.visibility = off ? "hidden" : "visible";
-  say.style.left = cl + "px"; say.style.top = clamp(t, 56, innerHeight - h - 8) + "px";
+  say.style.left = cl + "px"; say.style.top = clamp(t, 12, innerHeight - h - 8) + "px";
 }
 
 /* ---------------- blinking ---------------- */
@@ -334,7 +334,7 @@ $("#pers").addEventListener("click", (e) => {
 function applyPersona(p) {
   face(p.id);
   document.documentElement.style.setProperty("--ring", p.c);
-  speak(p.line, p.id === "leader");
+  speak(p.line, { amber: p.id === "leader" });
   if (REDUCED) return;
   if (p.id === "supportive") gsap.fromTo(jump, { scale: .92, rotation: -5 }, { scale: 1, rotation: 0, duration: .9, ease: "elastic.out(1,.35)" });
   if (p.id === "understanding") gsap.fromTo(jump, { rotation: 7, y: 6 }, { rotation: 0, y: 0, duration: 1.2, ease: "elastic.out(1,.4)" });
@@ -355,51 +355,45 @@ document.addEventListener("motivo:signedup", () => { signedUp = true; celebrate(
 
 /* ---------------- choreography ---------------- */
 gsap.registerPlugin(ScrollTrigger);
-if (fine && !REDUCED && typeof Lenis !== "undefined") {
-  const lenis = new Lenis({ lerp: .09 });
-  lenis.on("scroll", ScrollTrigger.update);
-  gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
-}
 addEventListener("scroll", () => { vScroll = scrollY - lastScroll; lastScroll = scrollY; }, { passive: true });
 
-// Hero: worried and wandering, then it turns to the reader and waves.
+/** Runs `enter` each time a section, or one screen of it, becomes the one in the middle of the screen. */
+function onScreen(el, enter) {
+  ScrollTrigger.create({ trigger: el, start: "top 50%", end: "bottom 50%", onToggle: (s) => { if (s.isActive) { lookEl = null; enter(el); } } });
+}
+const onSection = (id, enter) => onScreen($("#" + id), enter);
+const anchorLine = (sec) => $("[data-anchor]", sec).dataset.say || "";
+
+// Hero: worried and wandering, wondering where to start. On the next screen it turns to the reader and waves.
 let phase = "";
 function setPhase(p) {
-  if (p === phase) return; phase = p;
+  const changed = p !== phase; phase = p;
   if (signedUp) return;
-  if (p === "hook") { wander = true; face("worried"); speak(heroA.el.dataset.say); }
+  if (p === "hook") { wander = true; face("worried"); speak($("#hero [data-anchor]").dataset.think, { thought: true }); }
   else {
-    wander = false; face("hello"); speak(heroA.el.dataset.sayMeet);
-    if (!REDUCED) gsap.timeline().to(tilt, { rotation: -9, duration: .16 }).to(tilt, { rotation: 8, duration: .2 }).to(tilt, { rotation: -6, duration: .18 }).to(tilt, { rotation: 0, duration: .5, ease: "elastic.out(1,.4)" });
+    wander = false; face("hello"); speak(anchorLine($("#meet")));
+    if (changed && !REDUCED) gsap.timeline().to(tilt, { rotation: -9, duration: .16 }).to(tilt, { rotation: 8, duration: .2 }).to(tilt, { rotation: -6, duration: .18 }).to(tilt, { rotation: 0, duration: .5, ease: "elastic.out(1,.4)" });
   }
 }
-function inHero() { const r = $("#hero").getBoundingClientRect(); return r.top <= innerHeight * .5 && r.bottom > innerHeight * .5; }
 setPhase("hook");
+onSection("hero", () => setPhase("hook"));
+onSection("meet", () => setPhase("meet"));
 
 if (!REDUCED) {
+  // Scrubbed between the two snapped screens: fully the hook on the first, fully Meet Motivo on the second.
   const lines = $$("#hook .line");
-  gsap.set("#meet", { visibility: "visible" });
-  gsap.set("#meet h2,#meet p", { opacity: 0 });
-  const tl = gsap.timeline({ scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom bottom", scrub: .7 } });
-  tl.to({}, { duration: .35 })
-    .to(lines, { yPercent: -60, opacity: 0, rotation: -3, stagger: .05, duration: .2, ease: "power3.in" }, ">")
-    .set(lines, { visibility: "hidden" })
-    .to(".qm", { scale: 0, rotation: 180, opacity: 0, stagger: .03, duration: .2, ease: "back.in(2)" }, "<")
-    .fromTo("#meet h2", { yPercent: 60, opacity: 0, rotation: 4 }, { yPercent: 0, opacity: 1, rotation: 0, duration: .25, ease: "back.out(1.6)" }, ">")
-    .fromTo("#meet p", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .15 }, ">-.08")
-    .to({}, { duration: .3 });
-  const phaseST = ScrollTrigger.create({ trigger: "#hero", start: "top top", end: "bottom bottom", onUpdate: (s) => { if (inHero()) setPhase(s.progress > .42 ? "meet" : "hook"); } });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: "#meet", start: "top bottom", end: "top top", scrub: .5 } });
+  tl.to(lines, { yPercent: -60, opacity: 0, rotation: -3, stagger: .05, duration: .3, ease: "power3.in" })
+    .to(".qm", { scale: 0, rotation: 180, opacity: 0, stagger: .03, duration: .25, ease: "back.in(2)" }, "<")
+    .fromTo("#meet h2", { yPercent: 60, opacity: 0, rotation: 4 }, { yPercent: 0, opacity: 1, rotation: 0, duration: .35, ease: "back.out(1.6)" }, ">-.1")
+    .fromTo("#meet .meet-copy p", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .2 }, ">-.1");
   // While someone types in the hero form, the hero holds still: an iOS keyboard scrolling the page must not fade the form away.
   const hook = $("#hook");
-  hook.addEventListener("focusin", () => { tl.scrollTrigger.disable(false); phaseST.disable(false); gsap.set(lines, { clearProps: "all" }); setPhase("hook"); });
+  hook.addEventListener("focusin", () => { tl.scrollTrigger.disable(false); gsap.set(lines, { clearProps: "all" }); setPhase("hook"); });
   hook.addEventListener("focusout", () => setTimeout(() => {
     if (hook.contains(document.activeElement)) return;
-    tl.scrollTrigger.enable(); phaseST.enable(); ScrollTrigger.refresh();
+    tl.scrollTrigger.enable(); ScrollTrigger.refresh();
   }, 0));
-  gsap.fromTo("#hero .anchor", { scale: 1 }, { scale: .86, ease: "none", scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom bottom", scrub: .7 } });
-} else {
-  // Still: the same two moments, chosen by where the reader is.
-  ScrollTrigger.create({ trigger: "#meet", start: "top 60%", onEnter: () => setPhase("meet"), onLeaveBack: () => setPhase("hook") });
 }
 
 // How it works: reveal, gaze and a line per beat.
@@ -423,7 +417,7 @@ $$(".beat").forEach((beat, i) => {
     }
   }
   ScrollTrigger.create({
-    trigger: beat, start: "top 55%", end: "bottom 55%",
+    trigger: beat, start: "top 50%", end: "bottom 50%",
     onToggle: (s) => {
       if (!s.isActive) return;
       lookEl = beat.dataset.look ? $(beat.dataset.look) : null;
@@ -440,19 +434,15 @@ function headingReveal(sec) {
   const words = h ? split(h) : [];
   if (!REDUCED && words.length) gsap.from(words, { yPercent: 115, rotation: 6, stagger: .07, duration: .8, ease: "power4.out", scrollTrigger: { trigger: sec, start: "top 70%" } });
 }
-function onSection(id, enter) {
-  const sec = $("#" + id);
-  ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onToggle: (s) => { if (s.isActive) { lookEl = null; enter(sec); } } });
-}
-const anchorLine = (sec) => $("[data-anchor]", sec).dataset.say || "";
 const restingRing = () => document.documentElement.style.setProperty("--ring", persona ? persona.c : "#2dd4bf");
 
 headingReveal($("#can-do"));
 if (!REDUCED) $$(".cap").forEach((c, i) => gsap.from(c, { y: 80, opacity: 0, rotation: i % 2 ? 4 : -4, duration: .9, ease: "power3.out", scrollTrigger: { trigger: c, start: "top 85%" } }));
-onSection("can-do", (sec) => { face("curious"); speak(anchorLine(sec)); });
+// One line on the first screen; the other screens let the phones talk.
+$$("#can-do .capscreen").forEach((scr) => onScreen(scr, () => { face("curious"); speak(anchorLine(scr)); }));
 
 headingReveal($("#yours"));
-if (!REDUCED) gsap.from("#yours .panel", { y: 60, opacity: 0, duration: .9, ease: "power3.out", scrollTrigger: { trigger: "#yours", start: "top 55%" } });
+if (!REDUCED) $$("#yours .panel").forEach((p) => gsap.from(p, { y: 60, opacity: 0, duration: .9, ease: "power3.out", scrollTrigger: { trigger: p, start: "top 85%" } }));
 onSection("yours", () => { if (persona) applyPersona(persona); else { face("idle"); speak("Make me yours!"); } });
 
 headingReveal($("#chatbot"));
