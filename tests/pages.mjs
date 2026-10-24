@@ -4,7 +4,7 @@ import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { join, dirname, resolve, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const SITE_ORIGIN = "https://sg9ae.github.io/motivo";
+export const SITE_ORIGIN = "https://sg9ae1-prog.github.io/motivo";
 export const PAGES = [
   "index.html",
   "privacy/index.html",

@@ -27,13 +27,15 @@ test("the hero opens with a thought, not a spoken line", () => {
   assert.match(anchor, /data-think="Where do I start\?"/);
   assert.doesNotMatch(anchor, /data-say=/);
   assert.doesNotMatch(html, /so where do I even start/);
-  assert.match(css, /#say\.thought\b/, "the bubble has a thought variant");
+  assert.match(css, /#say\.chat\b/, "the bubble has a chat-message variant");
 });
 
-test("one Motivo logo on the first screen, directly above the headline", () => {
-  assert.doesNotMatch(html, /<header\b/, "no top-bar brand to double the hero logo");
-  const hook = section("hero").match(/<div class="hook"[\s\S]*?<\/h1>/)[0];
-  assert.match(hook, /<div class="hook" id="hook">\s*<div class="brand[^"]*"><img src="assets\/img\/logo-mark\.png"[^>]*>Motivo<\/div>\s*<h1>/);
+test("one Motivo logo on the first screen, directly above Meet Motivo", () => {
+  assert.doesNotMatch(html, /<header\b/, "no top-bar brand to double the first screen's logo");
+  assert.equal((html.match(/<div class="brand\b/g) ?? []).length, 1);
+  const copy = section("meet").match(/<div class="meet-copy"[\s\S]*?<\/h2>/)[0];
+  assert.match(copy, /<div class="meet-copy">\s*<div class="brand[^"]*"><img src="assets\/img\/logo-mark\.png"[^>]*alt=""[^>]*><\/div>\s*<h2 id="meet-title"[^>]*>/,
+    "the logo alone: the name is already in Meet Motivo, right below it");
 });
 
 test("question marks live around the character, never loose in the hero", () => {
@@ -83,7 +85,7 @@ test("at most two emoji on the whole page", () => {
 test("before launch there are no store buttons, and every sign-up form is complete", () => {
   assert.doesNotMatch(html, /App Store|Google Play|play\.google\.com|apps\.apple\.com/);
   const forms = html.match(/<form[\s\S]*?<\/form>/gi) ?? [];
-  assert.ok(forms.length >= 2, "hero and Get Motivo forms");
+  assert.ok(forms.length >= 1, "the Get Motivo form");
   for (const f of forms) {
     assert.match(f, /type="email"/);
     assert.match(f, /name="website"/);
@@ -93,7 +95,7 @@ test("before launch there are no store buttons, and every sign-up form is comple
 });
 
 test("the section order follows the spec", () => {
-  const ids = ["hero", "how", "can-do", "yours", "chatbot", "free", "privacy", "get"];
+  const ids = ["meet", "hero", "how", "can-do", "yours", "chatbot", "free", "privacy", "get"];
   const at = ids.map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i > 0), `missing: ${ids.filter((_, k) => at[k] < 0)}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at);
@@ -137,10 +139,4 @@ test("iOS tilt asks on a real tap (click), never on touchend, and listens again 
   assert.doesNotMatch(js, /touchend/);
   assert.match(js, /requestPermission\(\)[\s\S]{0,200}\.catch\(arm\)/);
   assert.match(js, /catch \{ arm\(\); \}/);
-});
-
-test("the hero form stays visible while it has focus", () => {
-  assert.match(css, /\.hook:focus-within \.line\s*\{[^}]*opacity:\s*1 !important[^}]*visibility:\s*visible !important[^}]*transform:\s*none !important/);
-  assert.match(js, /hook\.addEventListener\("focusin"/);
-  assert.match(js, /hook\.addEventListener\("focusout"/);
 });

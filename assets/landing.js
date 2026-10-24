@@ -72,11 +72,11 @@ function face(name) {
 }
 draw(); face("worried");
 
-/* ---------------- speech and thought bubble ---------------- */
+/* ---------------- speech bubble and chat message ---------------- */
 const say = $("#say");
 let sayText = "", sayTimer;
-/** Show a line. `thought` draws it as a thought cloud instead of speech; `amber` tints it. */
-function speak(text, { amber = false, thought = false } = {}) {
+/** Show a line. `from` ("you" or "motivo") shows it as a chat message from that sender; the reader's gets Motivo's typing dots. `amber` tints it. */
+function speak(text, { amber = false, from = "" } = {}) {
   if (text === sayText) return;
   sayText = text;
   clearTimeout(sayTimer);
@@ -84,8 +84,11 @@ function speak(text, { amber = false, thought = false } = {}) {
   say.classList.remove("on");
   sayTimer = setTimeout(() => {
     say.textContent = text;
+    if (from) { const label = document.createElement("span"); label.className = "from"; label.textContent = from === "you" ? "YOU · NOW" : "MOTIVO · NOW"; say.prepend(label); }
     say.classList.toggle("amber", amber);
-    say.classList.toggle("thought", thought);
+    say.classList.toggle("chat", !!from);
+    say.classList.toggle("you", from === "you");
+    say.classList.toggle("motivo", from === "motivo");
     say.classList.add("on");
   }, say.textContent && !REDUCED ? 120 : 0);
 }
@@ -158,7 +161,7 @@ function frame() {
   squash.style.transform = REDUCED ? "" : `scale(${1 - sk * .6},${1 + sk})`;
   const now = performance.now();
   const cx = st.x, cy = st.y;
-  let gx = 0, gy = 0;
+  let gx = 0, gy = 0, ease = .13;
   if (pointer && now - pointerAt < 2500) {
     gx = clamp((pointer.x - cx) / (innerWidth * .32), -1, 1); gy = clamp((pointer.y - cy) / (innerHeight * .32), -1, 1);
   } else if (lookEl) {
@@ -166,11 +169,12 @@ function frame() {
     gx = clamp((lr.left + lr.width / 2 - cx) / (innerWidth * .3), -1, 1); gy = clamp((lr.top + lr.height / 2 - cy) / (innerHeight * .3), -1, 1);
   } else if (orient) { gx = orient.x; gy = orient.y; }
   else if (wander) {
-    if (now > wanderT) { wanderT = now + 900 + Math.random() * 1400; gaze.tx = [-1, 1, .6, -.6, 0][Math.floor(Math.random() * 5)]; gaze.ty = [-.5, .4, 0, -.8][Math.floor(Math.random() * 4)]; }
+    ease = .045; // a slow drift between resting points, so idle eyes never dart
+    if (now > wanderT) { wanderT = now + 3000 + Math.random() * 2000; gaze.tx = [-1, 1, .6, -.6, 0][Math.floor(Math.random() * 5)]; gaze.ty = [-.5, .4, 0, -.8][Math.floor(Math.random() * 4)]; }
     gx = gaze.tx; gy = gaze.ty;
   } else { gx = Math.sin(now / 2300) * .35; gy = Math.cos(now / 3100) * .2 + clamp(vScroll * .02, -.6, .6); }
   if (REDUCED) { gx = 0; gy = 0; }
-  gaze.x += (gx - gaze.x) * .13; gaze.y += (gy - gaze.y) * .13;
+  gaze.x += (gx - gaze.x) * ease; gaze.y += (gy - gaze.y) * ease;
   const X = gaze.x, Y = gaze.y;
   const T = (g, kx, ky) => g && g.setAttribute("transform", `translate(${(X * kx).toFixed(1)} ${(Y * ky).toFixed(1)})`);
   T(G.skin, 8, 5); T(G.hairb, 3, 2); T(G.brows, 22, 13); T(G.eyes, 26, 16); T(G.fhair, 18, 10);
@@ -187,7 +191,7 @@ function placeSay(a) {
   if (side === "none") { say.style.visibility = "hidden"; return; } // a spot with no room for a bubble on this layout
   const w = say.offsetWidth, h = say.offsetHeight;
   const S = st.s * W, R = S * .332, cx = st.x, cy = st.y;
-  const gap = say.classList.contains("thought") ? 26 : 16; // a thought needs room for its trailing bubbles
+  const gap = say.classList.contains("you") ? 48 : 16; // room below the message for Motivo's typing dots
   // No room above the head: beside it would sit on the copy, so the line stays unsaid on this layout.
   if (side === "top" && cy - .4 * S - h - gap < 12) { say.style.visibility = "hidden"; return; }
   let l, t;
@@ -207,9 +211,8 @@ function placeSay(a) {
 function blink() {
   if (G.blink && look.eyes === "cute") {
     gsap.fromTo(G.blink, { scaleY: 1, svgOrigin: "500 555" }, { scaleY: .06, svgOrigin: "500 555", duration: .07, yoyo: true, repeat: 1, ease: "power1.inOut" });
-    if (Math.random() < .22) setTimeout(blink, 220);
   }
-  setTimeout(blink, 1800 + Math.random() * 3200);
+  setTimeout(blink, 4000 + Math.random() * 3000);
 }
 if (!REDUCED) setTimeout(blink, 1500);
 
@@ -364,36 +367,30 @@ function onScreen(el, enter) {
 const onSection = (id, enter) => onScreen($("#" + id), enter);
 const anchorLine = (sec) => $("[data-anchor]", sec).dataset.say || "";
 
-// Hero: worried and wandering, wondering where to start. On the next screen it turns to the reader and waves.
+// The corner "Get early access" button steps aside once the sign-up screen, which it points to, is in view.
+new IntersectionObserver(([e]) => $(".early").classList.toggle("away", e.isIntersecting), { threshold: .3 }).observe($("#get"));
+
+// First screen: Motivo waves hello. On the next, the hero, it turns worried and wanders, wondering where to start.
 let phase = "";
 function setPhase(p) {
   const changed = p !== phase; phase = p;
   if (signedUp) return;
-  if (p === "hook") { wander = true; face("worried"); speak($("#hero [data-anchor]").dataset.think, { thought: true }); }
+  if (p === "hook") { wander = true; face("worried"); speak($("#hero [data-anchor]").dataset.think, { from: "you" }); }
   else {
-    wander = false; face("hello"); speak(anchorLine($("#meet")));
+    wander = false; face("hello"); speak(anchorLine($("#meet")), { from: "motivo" });
     if (changed && !REDUCED) gsap.timeline().to(tilt, { rotation: -9, duration: .16 }).to(tilt, { rotation: 8, duration: .2 }).to(tilt, { rotation: -6, duration: .18 }).to(tilt, { rotation: 0, duration: .5, ease: "elastic.out(1,.4)" });
   }
 }
-setPhase("hook");
-onSection("hero", () => setPhase("hook"));
+setPhase("meet");
 onSection("meet", () => setPhase("meet"));
+onSection("hero", () => setPhase("hook"));
 
 if (!REDUCED) {
-  // Scrubbed between the two snapped screens: fully the hook on the first, fully Meet Motivo on the second.
-  const lines = $$("#hook .line");
-  const tl = gsap.timeline({ scrollTrigger: { trigger: "#meet", start: "top bottom", end: "top top", scrub: .5 } });
-  tl.to(lines, { yPercent: -60, opacity: 0, rotation: -3, stagger: .05, duration: .3, ease: "power3.in" })
-    .to(".qm", { scale: 0, rotation: 180, opacity: 0, stagger: .03, duration: .25, ease: "back.in(2)" }, "<")
-    .fromTo("#meet h2", { yPercent: 60, opacity: 0, rotation: 4 }, { yPercent: 0, opacity: 1, rotation: 0, duration: .35, ease: "back.out(1.6)" }, ">-.1")
-    .fromTo("#meet .meet-copy p", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .2 }, ">-.1");
-  // While someone types in the hero form, the hero holds still: an iOS keyboard scrolling the page must not fade the form away.
-  const hook = $("#hook");
-  hook.addEventListener("focusin", () => { tl.scrollTrigger.disable(false); gsap.set(lines, { clearProps: "all" }); setPhase("hook"); });
-  hook.addEventListener("focusout", () => setTimeout(() => {
-    if (hook.contains(document.activeElement)) return;
-    tl.scrollTrigger.enable(); ScrollTrigger.refresh();
-  }, 0));
+  // Scrubbed between the two snapped screens: fully Meet Motivo on the first, fully the hero on the second.
+  const tl = gsap.timeline({ scrollTrigger: { trigger: "#hero", start: "top bottom", end: "top top", scrub: .5 } });
+  tl.to("#meet .line", { yPercent: -60, opacity: 0, rotation: -3, stagger: .05, duration: .3, ease: "power3.in" })
+    .from(".qm", { scale: 0, rotation: -180, opacity: 0, stagger: .03, duration: .25, ease: "back.out(2)" }, ">-.05")
+    .from("#hook .line", { yPercent: 60, opacity: 0, rotation: 4, stagger: .06, duration: .35, ease: "back.out(1.6)" }, "<");
 }
 
 // How it works: reveal, gaze and a line per beat.
@@ -450,11 +447,14 @@ if (!REDUCED) gsap.from("#chatbot .vs", { y: 60, opacity: 0, stagger: .15, durat
 onSection("chatbot", (sec) => { restingRing(); face("wink"); speak(anchorLine(sec)); });
 
 headingReveal($("#free"));
-if (!REDUCED) gsap.from("#free .plan li", { y: 30, opacity: 0, stagger: .05, duration: .5, ease: "back.out(2)", scrollTrigger: { trigger: "#free .plans", start: "top 80%" } });
+if (!REDUCED) gsap.from("#free .icons li", { y: 24, opacity: 0, scale: .6, stagger: .05, duration: .5, ease: "back.out(2)", scrollTrigger: { trigger: "#free .plans", start: "top 80%" } });
 onSection("free", () => { face("hello"); speak(""); });
 
 headingReveal($("#privacy"));
-if (!REDUCED) gsap.from("#privacy .promises li", { x: -30, opacity: 0, stagger: .08, duration: .6, ease: "power3.out", scrollTrigger: { trigger: "#privacy .promises", start: "top 80%" } });
+if (!REDUCED) gsap.timeline({ scrollTrigger: { trigger: "#privacy .tiles", start: "top 85%" } })
+  .from("#privacy .lockphone", { y: 30, opacity: 0, scale: .8, duration: .6, ease: "back.out(1.8)" })
+  .from("#privacy .lockphone .i", { scale: 0, rotation: -30, duration: .4, ease: "back.out(3)" }, "-=.2")
+  .from("#privacy .tiles li", { y: 24, opacity: 0, stagger: .08, duration: .5, ease: "power3.out" }, "-=.2");
 onSection("privacy", (sec) => { face("idle"); speak(anchorLine(sec)); });
 
 headingReveal($("#get"));

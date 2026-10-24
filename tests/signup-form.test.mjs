@@ -126,6 +126,6 @@ test("the sign-up loads independently of the character and its libraries", () =>
 
 test("every sign-up form posts, so an email can never land in a URL", () => {
   const forms = readPage("index.html").match(/<form[^>]*>/gi) ?? [];
-  assert.ok(forms.length >= 2);
+  assert.ok(forms.length >= 1, "the Get Motivo form");
   for (const f of forms) assert.match(f, /method="post"/);
 });

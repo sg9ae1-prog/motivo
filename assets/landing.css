@@ -71,17 +71,24 @@ html { scroll-snap-type: y mandatory; }
 #say.right::after { left: -6px; top: 50%; margin-top: -7px; }
 #say.amber { background: #fff4dc; box-shadow: 0 14px 40px -12px rgba(0, 0, 0, .7), 0 0 0 3px rgba(245, 158, 11, .5); }
 #say.amber::after { background: #fff4dc; }
-/* A thought: a cloud with small bubbles trailing to the head, instead of a speech tail. The outline follows the whole cloud. */
-#say.thought { border-radius: 999px; padding: 12px 20px; box-shadow: none;
-  filter: drop-shadow(0 0 1.5px rgba(45, 212, 191, .95)) drop-shadow(0 0 1px rgba(45, 212, 191, .95)) drop-shadow(0 12px 16px rgba(0, 0, 0, .55)); }
-#say.thought::before { content: ""; position: absolute; inset: -9px 6px; z-index: -1;
-  background: radial-gradient(circle at 16% 34%, #fff 12px, transparent 12.5px), radial-gradient(circle at 38% 16%, #fff 15px, transparent 15.5px),
-    radial-gradient(circle at 64% 20%, #fff 14px, transparent 14.5px), radial-gradient(circle at 86% 38%, #fff 11px, transparent 11.5px),
-    radial-gradient(circle at 28% 84%, #fff 12px, transparent 12.5px), radial-gradient(circle at 58% 86%, #fff 13px, transparent 13.5px),
-    radial-gradient(circle at 82% 76%, #fff 10px, transparent 10.5px); }
-#say.thought::after { width: 13px; height: 13px; border-radius: 50%; transform: none; box-shadow: 7px 13px 0 -2.5px #fff; }
-#say.thought.top::after { bottom: -16px; margin-left: -9px; }
-#say.thought.right::after { left: -18px; top: 62%; margin-top: 0; box-shadow: -13px 8px 0 -2.5px #fff; }
+/* A line shown as a chat message: the reader's own question (with Motivo's typing dots answering below it), or Motivo's reply. */
+#say.chat { background: #1c2733; color: #e8eef5; border-radius: 18px 18px 18px 4px; padding: 10px 14px 11px; font-size: 16px; max-width: min(230px, 64vw);
+  box-shadow: 0 10px 26px -10px #000, inset 0 0 0 1px rgba(255, 255, 255, .06); transform-origin: 0 100%; }
+#say.chat .from { display: block; margin-bottom: 3px; font-size: 10.5px; letter-spacing: .08em; color: #8a97a6; }
+#say.chat.you::after { width: 46px; height: 24px; left: 2px; bottom: -32px; margin: 0; transform: none; border-radius: 12px; background-color: #1c2733;
+  background-image: radial-gradient(circle, #8a97a6 3px, transparent 3.5px), radial-gradient(circle, #8a97a6 3px, transparent 3.5px), radial-gradient(circle, #8a97a6 3px, transparent 3.5px);
+  background-size: 8px 8px; background-repeat: no-repeat; background-position: 9px 8px, 19px 8px, 29px 8px; animation: typing 1.2s ease-in-out infinite; }
+@keyframes typing { 20% { background-position: 9px 4px, 19px 8px, 29px 8px; } 40% { background-position: 9px 8px, 19px 4px, 29px 8px; }
+  60% { background-position: 9px 8px, 19px 8px, 29px 4px; } 80% { background-position: 9px 8px, 19px 8px, 29px 8px; } }
+.rm #say.chat.you::after { animation: none; }
+#say.chat.motivo { box-shadow: 0 10px 26px -10px #000, inset 0 0 0 1px rgba(45, 212, 191, .35); }
+#say.chat.motivo .from { color: #5eead4; }
+#say.chat.motivo::after { display: none; }
+/* For the reader who is already sold: straight to the sign-up, from any screen. */
+.early { position: fixed; top: max(14px, env(safe-area-inset-top)); right: 14px; z-index: 40; padding: 9px 16px; border-radius: 999px;
+  font: 800 15px/1 var(--font-head); color: #2a1a05; background: var(--amber); text-decoration: none; box-shadow: 0 8px 22px -8px rgba(245, 158, 11, .7); }
+.early { transition: opacity .3s, transform .3s; }
+.early.away { opacity: 0; transform: translateY(-8px); pointer-events: none; }
 #confetti { position: fixed; inset: 0; z-index: 50; pointer-events: none; width: 100%; height: 100%; }
 .anchor { aspect-ratio: 1; border-radius: 50%; pointer-events: none; }
 
@@ -108,10 +115,10 @@ html { scroll-snap-type: y mandatory; }
 .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------- 1–2. Hero and Meet Motivo ---------- */
-/* The character's spot takes whatever height the copy leaves, with room above it for the thought. */
+/* The character's spot takes whatever height the copy leaves, with room above it for the message. */
 .hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 64px; }
-.hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the thought */ container-type: inline-size; }
-/* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the thought. */
+.hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the message */ container-type: inline-size; }
+/* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the message. */
 .qm { position: absolute; left: var(--x); top: var(--y); font: 800 calc(var(--s) * 100cqw)/1 var(--font-head); color: var(--amber); opacity: .85;
   text-shadow: 0 0 24px rgba(245, 158, 11, .5); animation: qm 3s ease-in-out infinite; animation-delay: var(--d, 0s); will-change: transform; }
 .qm:nth-child(1) { --x: -40%; --y: 26%; --s: .26; --r: -14deg; }
@@ -120,12 +127,10 @@ html { scroll-snap-type: y mandatory; }
 .qm:nth-child(4) { --x: 108%; --y: 58%; --s: .28; --r: -10deg; --d: -.5s; }
 @keyframes qm { 50% { transform: translateY(-12px) rotate(var(--r, 0deg)); } }
 .hook, .meet-copy { padding-inline: var(--gut); }
-.hook .brand { margin-bottom: 14px; }
-.hook .brand img { filter: drop-shadow(0 0 12px rgba(45, 212, 191, .6)); }
+.meet-copy .brand { margin-bottom: 14px; }
+.meet-copy .brand img { width: 64px; height: 64px; filter: drop-shadow(0 0 12px rgba(45, 212, 191, .6)); }
 .hook h1 { font-size: clamp(36px, 10.4vw, 54px); }
 .hook .line { display: block; }
-/* Typing in the hero form wins over the scroll animation: the form stays put. */
-.hook:focus-within .line { opacity: 1 !important; visibility: visible !important; transform: none !important; }
 .hook .lede { font: 800 clamp(19px, 5.2vw, 26px)/1.15 var(--font-head); color: var(--text); margin: 12px 0 18px; max-width: 26ch; }
 .meet-copy { padding-block: 4svh 6svh; }
 .meet-copy h2 { font-size: clamp(58px, 17vw, 84px); }
@@ -281,23 +286,30 @@ html { scroll-snap-type: y mandatory; }
 .versus-line { margin-top: 20px; font-size: 18px; max-width: 46ch; color: var(--text); }
 
 /* ---------- 7. Free, honestly ---------- */
-.plans { display: grid; gap: 34px; }
-.plan h3 { font: 900 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; margin-bottom: 12px; }
+.plans { display: grid; gap: 14px; }
+.plan { border-radius: 22px; padding: 18px 16px 20px; }
+.plan.free { background: rgba(255, 255, 255, .06); }
+.plan.pro { border: 1.5px dashed rgba(245, 158, 11, .5); }
+.plan h3 { font: 800 21px/1 var(--font-head); margin-bottom: 16px; }
 .plan.free h3 { color: var(--teal-glow); }
 .plan.pro h3 { color: var(--amber); }
-.plan ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font: 800 clamp(32px, 9.4vw, 56px)/1.05 var(--font-head); letter-spacing: -.02em; }
-.plan li { display: inline-flex; align-items: baseline; }
-.plan li:not(:last-child)::after { content: "·"; margin-left: 14px; opacity: .35; }
-.plan.pro ul { color: #ffd9a3; }
-.fine { margin-top: 30px; color: var(--text-muted); font-size: 16px; }
+/* One icon over one or two words per feature. */
+.icons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center; }
+.icons li { display: flex; flex-direction: column; align-items: center; gap: 7px; font: 900 12.5px/1.15 var(--font-body); color: var(--text); }
+.i { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.plan.free .i { color: var(--teal-glow); }
+.plan.pro .i { color: var(--amber); }
+.trial { margin-top: 16px; font: 800 17px/1.2 var(--font-head); color: #ffd9a3; }
+.fine { margin-top: 14px; color: var(--text-muted); font-size: 14px; }
 
-/* ---------- 8. Your stuff stays yours ---------- */
-.promises { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; max-width: 760px; counter-reset: p; }
-.promises li { counter-increment: p; display: grid; grid-template-columns: 44px 1fr; gap: 6px; padding: 12px 0; border-top: 1px solid var(--border);
-  font: 800 clamp(20px, 5.4vw, 28px)/1.2 var(--font-head); letter-spacing: -.01em; }
-.promises li::before { content: counter(p, decimal-leading-zero); font: 900 13px/2 var(--font-body); color: var(--teal-glow); letter-spacing: .08em; }
-.promises li:last-child { border-bottom: 1px solid var(--border); }
-.readmore { display: inline-block; margin-top: 24px; font-weight: 900; font-size: 17px; }
+/* ---------- 8. Your stuff stays yours: a locked phone and four tiles ---------- */
+.lockphone { width: 96px; height: 160px; margin: 0 auto 22px; border: 4px solid var(--teal-glow); border-radius: 22px; display: grid; place-items: center;
+  box-shadow: 0 0 40px rgba(45, 212, 191, .35), inset 0 0 30px rgba(45, 212, 191, .12); }
+.lockphone .i { width: 46px; height: 46px; color: var(--teal-glow); }
+.tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 560px; }
+.tiles li { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; background: rgba(255, 255, 255, .06); font: 900 14.5px/1.15 var(--font-body); }
+.tiles .i { flex: none; width: 26px; height: 26px; color: var(--teal-glow); }
+.readmore { display: inline-block; margin-top: 18px; font-weight: 900; font-size: 17px; }
 
 /* ---------- 9. Get Motivo ---------- */
 /* The last screen shares the viewport with the footer. */
@@ -313,14 +325,14 @@ html { scroll-snap-type: y mandatory; }
   /* Hero and Meet share one layout, so the character stays put while the words change. */
   #hero, #meet { flex-direction: row-reverse; align-items: center; padding-inline: var(--gut); }
   .hook, .meet-copy { flex: 0 0 54%; padding: 0; }
-  .hero-char { align-self: stretch; padding-top: 0; }
-  .hero-char .anchor { width: min(32vw, 460px, 100cqh - 160px); }
+  .hero-char { align-self: stretch; padding-top: 170px; } /* room above the head for the reader's message, even in a short window */
+  .hero-char .anchor { width: min(32vw, 460px, 100cqh - 24px); }
   .qm:nth-child(1) { --x: 2%; --y: -24%; --s: .14; }
   .qm:nth-child(2) { --x: 92%; --y: -14%; --s: .1; }
   .qm:nth-child(3) { --x: 104%; --y: 46%; --s: .09; }
   .qm:nth-child(4) { --x: 90%; --y: 94%; --s: .14; }
-  .hook .brand { font-size: 1.75rem; margin-bottom: 22px; }
-  .hook .brand img { width: 42px; height: 42px; }
+  .meet-copy .brand { margin-bottom: 22px; }
+  .meet-copy .brand img { width: 84px; height: 84px; }
   .hook h1 { font-size: clamp(60px, 5.8vw, 104px); }
   .hook .lede { font-size: clamp(24px, 2vw, 32px); margin: 20px 0 30px; }
   .meet-copy h2 { font-size: clamp(100px, 10vw, 180px); }
@@ -349,13 +361,20 @@ html { scroll-snap-type: y mandatory; }
   .vs .notif h3 { font-size: 19px; }
   .vs .notif p { font-size: 14.5px; }
   .vs.mo .clock { font-size: 56px; }
-  .plans { grid-template-columns: 1fr 1fr; gap: 6vw; max-width: 1100px; }
-  .plan ul { font-size: clamp(40px, 4vw, 64px); }
+  .plans { grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; }
+  .plan { padding: 28px 26px 30px; }
+  .plan h3 { font-size: 28px; }
+  .icons li { font-size: 16px; }
+  .icons .i { width: 44px; height: 44px; }
+  .lockphone { width: 140px; height: 230px; }
+  .tiles li { font-size: 18px; padding: 18px; }
   .privacy-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 6vw; align-items: center; }
   .privacy-grid .shead { flex-direction: column; align-items: flex-start; }
   #get .anchor { width: min(20vw, 260px, 26svh); }
 }
 @media (max-width: 899px) { #say { font-size: 14px; } }
+@media (min-width: 900px) { #say.chat { font-size: 21px; max-width: 320px; padding: 13px 20px 15px; border-radius: 22px 22px 22px 5px; }
+  #say.chat .from { font-size: 12.5px; margin-bottom: 4px; } }
 
 /* ---------- Reduced motion: the same snapped screens, each a finished still ---------- */
 .rm .qm, .rm .scrollcue, .rm .sky b, .rm #mo-float, .rm #mo-glow, .rm .wave i, .rm .goalcard .typed i, .rm .vs.bot .input i { animation: none !important; }

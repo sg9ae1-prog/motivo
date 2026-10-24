@@ -9,14 +9,14 @@
   <meta property="og:site_name" content="Motivo">
   <meta property="og:title" content="Motivo — The friend who never gives up on you.">
   <meta property="og:description" content="Helps you reach your goals, in the way that works best for you.">
-  <meta property="og:url" content="https://sg9ae.github.io/motivo/">
-  <meta property="og:image" content="https://sg9ae.github.io/motivo/assets/img/og.png">
+  <meta property="og:url" content="https://sg9ae1-prog.github.io/motivo/">
+  <meta property="og:image" content="https://sg9ae1-prog.github.io/motivo/assets/img/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Motivo — The friend who never gives up on you.">
   <meta name="twitter:description" content="Helps you reach your goals, in the way that works best for you.">
-  <meta name="twitter:image" content="https://sg9ae.github.io/motivo/assets/img/og.png">
+  <meta name="twitter:image" content="https://sg9ae1-prog.github.io/motivo/assets/img/og.png">
   <meta name="theme-color" content="#05080f">
   <link rel="icon" href="assets/img/logo-mark.png">
   <link rel="stylesheet" href="assets/site.css">
@@ -36,8 +36,39 @@
   <div id="say" aria-hidden="true"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
+  <a class="early" href="#get">Get early access</a>
+  <!-- Line icons for Free and Privacy, drawn once and reused. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.2.3 1.5 1.3 2.7 2.5 2.7z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-chats" viewBox="0 0 24 24"><path d="M17 9h2a2 2 0 0 1 2 2v10l-3-3h-7a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v10l3-3h9a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.9.8A4 4 0 0 0 4 13a4 4 0 0 0 3 5 3 3 0 0 0 5 1zM12 5a3 3 0 1 1 5.9.8A4 4 0 0 1 20 13a4 4 0 0 1-3 5 3 3 0 0 1-5 1z"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.8 1.5-1.6 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a6 6 0 0 0 6-6C22 6 17.5 2 12 2z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-noserver" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="1"/><rect x="3" y="13" width="18" height="7" rx="1"/><path d="M2 2l20 20"/></symbol>
+    <symbol id="i-notrain" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.9.8A4 4 0 0 0 4 13a4 4 0 0 0 3 5 3 3 0 0 0 5 1zM12 5a3 3 0 1 1 5.9.8A4 4 0 0 1 20 13a4 4 0 0 1-3 5 3 3 0 0 1-5 1zM2 2l20 20"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></symbol>
+  </defs></svg>
+
   <main>
-    <!-- 1. Hero: the character wonders where to start. Question marks live inside its spot, so they never reach the copy. -->
+    <!-- 1. Meet Motivo: the character waves hello before anything is asked of the reader. -->
+    <section id="meet" class="snap" aria-labelledby="meet-title">
+      <div class="hero-char"><div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Hi! I'm Motivo."></div></div>
+      <div class="meet-copy">
+        <div class="brand line"><img src="assets/img/logo-mark.png" alt="" width="36" height="36"></div>
+        <h2 id="meet-title" class="line">Meet <em class="t">Motivo.</em></h2>
+        <p class="line">Your friendly guide.</p>
+      </div>
+      <div class="scrollcue" aria-hidden="true"></div>
+    </section>
+
+    <!-- 2. Hero: the problem and the promise. The character wonders where to start; question marks live inside its spot, so they never reach the copy. -->
     <section id="hero" class="snap" aria-label="Motivo">
       <div class="hero-char">
         <div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-think="Where do I start?">
@@ -48,29 +79,8 @@
         </div>
       </div>
       <div class="hook" id="hook">
-        <div class="brand line"><img src="assets/img/logo-mark.png" alt="" width="36" height="36">Motivo</div>
         <h1><span class="line">The friend who never <em class="a">gives up on you.</em></span></h1>
         <p class="lede line">Helps you reach your goals, in the way that works best for you.</p>
-        <form class="signup line" data-signup method="post">
-          <label class="sr" for="email-hero">Your email</label>
-          <div class="signup-row">
-            <input id="email-hero" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
-            <button class="be-first" type="submit">Be first</button>
-          </div>
-          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-          <p class="signup-status" data-status aria-live="polite"></p>
-          <p class="signup-note">We'll only write when Motivo launches.</p>
-        </form>
-      </div>
-      <div class="scrollcue" aria-hidden="true"></div>
-    </section>
-
-    <!-- 2. Meet Motivo -->
-    <section id="meet" class="snap" aria-labelledby="meet-title">
-      <div class="hero-char"><div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Hi! I'm Motivo."></div></div>
-      <div class="meet-copy">
-        <h2 id="meet-title">Meet <em class="t">Motivo.</em></h2>
-        <p>Your friendly guide.</p>
       </div>
     </section>
 
@@ -256,8 +266,9 @@
           <h2 id="free-title" data-split>Free, <em class="a">honestly.</em></h2>
         </div>
         <div class="plans">
-          <div class="plan free"><h3>Free, forever</h3><ul><li>Goals</li><li>Plans</li><li>Habits</li><li>Streaks</li></ul></div>
-          <div class="plan pro"><h3>Pro adds</h3><ul><li>Unlimited chat</li><li>Voice</li><li>Memory</li><li>Guides</li><li>All looks</li></ul></div>
+          <div class="plan free"><h3>Free, forever</h3><ul class="icons"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span>Habits</span></li><li><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tasks</span></li><li><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg><span>Streaks</span></li><li><svg class="i" aria-hidden="true"><use href="#i-sun"/></svg><span>Morning hello</span></li><li><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg><span>A little chat</span></li></ul></div>
+          <div class="plan pro"><h3>Pro adds</h3><ul class="icons"><li><svg class="i" aria-hidden="true"><use href="#i-chats"/></svg><span>Unlimited chat</span></li><li><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span>Voice</span></li><li><svg class="i" aria-hidden="true"><use href="#i-brain"/></svg><span>Memory</span></li><li><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg><span>Personalities</span></li><li><svg class="i" aria-hidden="true"><use href="#i-book"/></svg><span>Task guides</span></li></ul>
+            <p class="trial">Try Pro free first.</p></div>
         </div>
         <p class="fine">Prices are shown in the store.</p>
       </div>
@@ -271,14 +282,9 @@
           <h2 id="privacy-title" data-split>Your stuff stays <em class="t">yours.</em></h2>
         </div>
         <div>
-          <ol class="promises" data-fit>
-            <li>Your goals and chats live on your phone.</li>
-            <li>Messages pass through our server and are never stored there.</li>
-            <li>The AI companies we use promise not to train on them or keep them for their own use.</li>
-            <li>Your account is stored in the EU.</li>
-            <li>Delete your account any time.</li>
-          </ol>
-          <a class="readmore" href="privacy/">Read the privacy policy</a>
+          <div class="lockphone" aria-hidden="true"><svg class="i"><use href="#i-lock"/></svg></div>
+          <ul class="tiles" data-fit><li><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><span>Lives on your phone</span></li><li><svg class="i" aria-hidden="true"><use href="#i-noserver"/></svg><span>Never kept on our server</span></li><li><svg class="i" aria-hidden="true"><use href="#i-notrain"/></svg><span>Not used to train AI</span></li><li><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg><span>Delete any time</span></li></ul>
+          <a class="readmore" href="privacy/">Privacy policy &rarr;</a>
         </div>
       </div>
     </section>
@@ -316,6 +322,7 @@
 
   <script type="module" src="assets/signup-init.js"></script>
   <script type="module" src="assets/fit-screens.js"></script>
+  <script type="module" src="assets/step-screens.js"></script>
   <script src="assets/vendor/gsap.min.js"></script>
   <script src="assets/vendor/ScrollTrigger.min.js"></script>
   <script src="assets/vendor/confetti.browser.min.js"></script>
