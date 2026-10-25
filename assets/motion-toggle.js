@@ -14,7 +14,12 @@ function setPaused(paused) {
     else gsap.globalTimeline.resume();
   }
   button.setAttribute("aria-pressed", String(paused));
-  button.textContent = paused ? "Play animation" : "Pause animation";
+  // A small round icon; its name is spoken by screen readers and shown when a pointer rests on it.
+  button.setAttribute("aria-label", paused ? "Play animation" : "Pause animation");
+  button.title = button.getAttribute("aria-label");
+  button.innerHTML = paused
+    ? '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>'
+    : '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
 }
 
 button.addEventListener("click", () => setPaused(!root.classList.contains("motion-paused")));

@@ -83,6 +83,8 @@ test("a keyboard-reachable pause control stops GSAP and CSS animation, and the p
   assert.match(js, /gsap\.globalTimeline\.resume\(\)/);
   assert.match(js, /createElement\("button"\)/);
   assert.match(js, /aria-pressed/);
+  assert.match(js, /setAttribute\("aria-label", paused \? "Play animation" : "Pause animation"\)/, "the icon is named for screen readers");
+  assert.match(js, /title = /, "and for a mouse pointer resting on it");
   assert.match(js, /classList\.toggle\("motion-paused"/);
   assert.match(css, /\.motion-paused \*[^{]*\{[^}]*animation-play-state:\s*paused/);
   assert.ok(pageScripts(html).some((s) => s.src === "assets/motion-toggle.js" && s.module));
