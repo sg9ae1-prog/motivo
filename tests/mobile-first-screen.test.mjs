@@ -20,7 +20,7 @@ test("on a phone, Motivo stays big: little room is reserved above his head, and 
 test("on a short phone, the copy shrinks instead of Motivo: the hello fits above him and the copy clears the pause button", () => {
   const rule = (sel) => css.match(new RegExp(`^${sel.replace(/[.]/g, "\\.")} \\{([^}]*)\\}`, "m"))?.[1] ?? "";
   assert.ok(+rule(".hero-char").match(/padding-top: (\d+)px/)?.[1] >= 104, "room for the corner button and the hello above his head");
-  assert.match(rule(".meet-copy"), /padding-block: 2svh 64px/, "the pause button is 44px tall, 12px from the bottom, plus a gap");
+  assert.match(rule(".meet-copy"), /padding-block: 2svh 88px/, "the pause button is 44px tall and 12px from the bottom; the copy sits well clear of it");
   assert.match(rule(".meet-copy h1"), /font-size: clamp\(46px, min\(17vw, 9svh\), 84px\)/, "the heading shrinks with the screen's height");
   assert.match(rule(".meet-copy .brand img"), /width: min\(64px, 8svh\); height: min\(64px, 8svh\)/, "and so does the logo");
 });
