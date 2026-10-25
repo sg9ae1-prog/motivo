@@ -19,11 +19,6 @@ test("the page does not wait for the drawing library before it shows Motivo", ()
   assert.doesNotMatch(js, /\bMotivo\.(render|part|colors)\b/, "the landing page draws only through the avatar module");
 });
 
-test("Motivo's drawings start downloading with the page, not after the main script asks for them", () => {
-  for (const f of ["landing.js", "avatar.js", "avatar-looks.js", "avatar-baked.js"])
-    assert.match(html, new RegExp(`<link rel="modulepreload" href="assets/${f.replace(".", "\\.")}">`), `${f} is fetched early`);
-});
-
 test("every drawing the page shows before any restyling is ready-made and matches the library exactly", () => {
   assert.equal(BAKED.renders[renderKey(HERO, 1000)], lib.render(HERO, 1000), "the hero");
   for (const [name, look] of Object.entries(MINIS)) assert.equal(BAKED.renders[renderKey(look, 300)], lib.render(look, 300), `mini ${name}`);

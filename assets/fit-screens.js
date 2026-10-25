@@ -48,5 +48,4 @@ let queued = 0;
 const refit = () => { cancelAnimationFrame(queued); queued = requestAnimationFrame(fitScreens); };
 fitScreens();
 addEventListener("resize", refit);
-addEventListener("load", fitScreens);
 document.fonts?.ready.then(fitScreens);

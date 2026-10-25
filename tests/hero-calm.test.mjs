@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { nextScreenTop, stepFor } from "../assets/step-screens.js";
+import { pageScripts } from "./pages.mjs";
 
 // The hero's look and feel, and keyboard paging, as asked for after the first review of the page.
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
@@ -38,7 +39,7 @@ test("the eyes rest: the gaze moves every 3 to 5 seconds and blinks come singly,
 });
 
 test("keyboard paging lives in its own module, loaded by the page", () => {
-  assert.match(html, /<script type="module" src="assets\/step-screens\.js"><\/script>/);
+  assert.ok(pageScripts(html).some((s) => s.src === "assets/step-screens.js" && s.module));
 });
 
 test("each paging key moves one screen, in its direction; other keys and typing are left alone", () => {

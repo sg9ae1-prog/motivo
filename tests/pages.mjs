@@ -95,3 +95,9 @@ export function findBrokenLinks(page, html) {
   }
   return broken;
 }
+
+/** The scripts a page starts once it has shown, in order, from its after-load loader: [{ src, module }]. */
+export function pageScripts(html) {
+  const loader = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((s) => s.includes('addEventListener("load"')) ?? "";
+  return [...loader.matchAll(/\["([^"]+)", "(module|classic)"\]/g)].map((m) => ({ src: m[1], module: m[2] === "module" }));
+}

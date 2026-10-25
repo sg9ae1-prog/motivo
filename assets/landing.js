@@ -279,8 +279,8 @@ $$("[data-wave]").forEach((w) => { w.innerHTML = Array.from({ length: 22 }, (_, 
 }
 
 /* ---------------- customiser ---------------- */
-// Fetch the drawing library once the page has settled, so restyling answers at once without slowing the first screen.
-addEventListener("load", () => (window.requestIdleCallback ?? setTimeout)(() => avatar.ready().catch(() => {})));
+// Fetch the drawing library once the browser is idle, so restyling answers at once without slowing the first screen.
+(window.requestIdleCallback ?? setTimeout)(() => avatar.ready().catch(() => {}));
 const OPT = {
   hair: [["short", "Classic Short"], ["bun", "Messy Bun"], ["afro", "Curly Volume"], ["bob", "Straight Bob"], ["mohawk", "Mohawk"], ["pixie", "Pixie Cut"]],
   accessory: [["none", "None"], ["tinyGlasses", "Simple"], ["roundGlasses", "Round"], ["shades", "Shades"]],
@@ -451,4 +451,3 @@ onSection("get", () => {
 });
 
 requestAnimationFrame(frame);
-addEventListener("load", () => ScrollTrigger.refresh());

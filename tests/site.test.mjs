@@ -5,6 +5,7 @@ import { join } from "node:path";
 import {
   PAGES, LEGAL_PATHS, ROOT, SKIP_DIRS, SITE_ORIGIN, listHtmlFiles, readPage,
   extractLinks, findBrokenLinks, fileExists, footerOf, SUBPATH_ABSOLUTE_PAGES,
+  pageScripts,
 } from "./pages.mjs";
 
 // Pages that exist today; checks other than "every page exists" cover these.
@@ -94,8 +95,8 @@ test("no page loads a script or stylesheet from another host", () => {
   for (const page of present()) {
     const html = readPage(page);
     const tags = html.match(/<script\b[^>]*>|<link\b[^>]*rel="(?:stylesheet|preload|modulepreload)"[^>]*>/gi) ?? [];
-    for (const tag of tags) {
-      const url = tag.match(/\b(?:src|href)="([^"]+)"/i)?.[1];
+    const urls = [...tags.map((tag) => tag.match(/\b(?:src|href)="([^"]+)"/i)?.[1]), ...pageScripts(html).map((s) => s.src)];
+    for (const url of urls) {
       if (url && /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(url) && !url.startsWith(SITE_ORIGIN)) offenders.push(`${page}: ${url}`);
     }
   }

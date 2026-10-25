@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { pageScripts } from "./pages.mjs";
 
 // The first screen on a phone: Motivo's hello must show whole, and the page must arrive quickly on a phone network.
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
@@ -32,8 +33,33 @@ test("the logo is a small file, not a full-size picture shrunk on screen", () =>
   assert.ok(kb < 16, `logo is ${kb.toFixed(0)} KB`);
 });
 
-test("the fonts start downloading as the page opens", () => {
-  for (const f of ["baloo-2-latin-800-normal.woff2", "nunito-latin-700-normal.woff2", "nunito-latin-900-normal.woff2"])
-    assert.match(html, new RegExp(`<link rel="preload"[^>]*${f.replace(/[.]/g, "\\.")}`), `${f} is preloaded`);
-  assert.ok(html.indexOf('rel="preload"') < html.indexOf('rel="stylesheet"'), "preloads come before the stylesheets");
+// The first screen needs only the page itself: its styles are written into it, and nothing else downloads until it has shown.
+test("the page's styles are written into it, matching the style files", async () => {
+  const { pageStyles } = await import("../tools/inline-styles.mjs");
+  assert.doesNotMatch(html, /<link rel="stylesheet"/, "no separate style file for the first screen to wait on");
+  const style = html.match(/<style>([\s\S]*?)<\/style>/)?.[1];
+  assert.equal(style, pageStyles(), "stale: run node tools/inline-styles.mjs");
+  assert.match(style, /url\("assets\/fonts\/baloo-2-latin-800-normal\.woff2"\)/, "file addresses are rewritten for the page's own folder");
+});
+
+test("nothing competes with the first screen: no early downloads, and every script starts after the page has shown", () => {
+  assert.doesNotMatch(html, /rel="(?:preload|modulepreload)"/);
+  assert.doesNotMatch(html, /<script[^>]*\ssrc=/, "no script tag downloads with the page");
+  assert.deepEqual(pageScripts(html).map((s) => s.src), [
+    "assets/signup-init.js", "assets/fit-screens.js", "assets/step-screens.js",
+    "assets/vendor/gsap.min.js", "assets/vendor/ScrollTrigger.min.js", "assets/vendor/confetti.browser.min.js",
+    "assets/landing.js", "assets/motion-toggle.js",
+  ]);
+  assert.deepEqual(pageScripts(html).filter((s) => !s.module).map((s) => s.src), ["assets/vendor/gsap.min.js", "assets/vendor/ScrollTrigger.min.js", "assets/vendor/confetti.browser.min.js"]);
+});
+
+test("the late scripts run in the listed order, so the character's script finds its animation libraries", () => {
+  const loader = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((s) => s.includes('addEventListener("load"'));
+  assert.match(loader, /\.async = false/, "added scripts otherwise run in whatever order they finish downloading");
+  assert.doesNotMatch(loader, /if[^;]*async = false/, "for modules as well as classic scripts");
+});
+
+test("no script waits for the page's load event: they all arrive after it, so it would never come", () => {
+  for (const f of readdirSync(new URL("../assets/", import.meta.url)).filter((f) => f.endsWith(".js") && f !== "bigheads.js"))
+    assert.doesNotMatch(read(`../assets/${f}`), /addEventListener\("load"/, f);
 });

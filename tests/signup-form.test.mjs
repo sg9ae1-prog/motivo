@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { attachSignupForm } from "../assets/signup.js";
 import { wireSignupForms } from "../assets/signup-init.js";
-import { readPage } from "./pages.mjs";
+import { readPage, pageScripts } from "./pages.mjs";
 
 // A minimal stand-in for the page: just what a sign-up form touches. No DOM library needed.
 function fakePage(formCount = 2) {
@@ -116,7 +116,7 @@ test("the forms are wired on their own, without the character script, and tell t
 
 test("the sign-up loads independently of the character and its libraries", () => {
   const html = readPage("index.html");
-  assert.match(html, /<script type="module" src="assets\/signup-init\.js"><\/script>/);
+  assert.deepEqual(pageScripts(html)[0], { src: "assets/signup-init.js", module: true }, "first, ahead of the character and its libraries");
   const init = readFileSync(new URL("../assets/signup-init.js", import.meta.url), "utf8");
   const imports = [...init.matchAll(/import[^"']*["']([^"']+)["']/g)].map((m) => m[1]);
   assert.deepEqual(imports, ["./signup.js"]);

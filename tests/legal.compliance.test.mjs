@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { CONSENT_VERSION, POLICY_VERSION, submitSignup } from "../assets/signup.js";
+import { pageScripts } from "./pages.mjs";
 
 // Legal and accessibility fixes from the pre-launch audit, made checkable.
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
@@ -84,7 +85,7 @@ test("a keyboard-reachable pause control stops GSAP and CSS animation, and the p
   assert.match(js, /aria-pressed/);
   assert.match(js, /classList\.toggle\("motion-paused"/);
   assert.match(css, /\.motion-paused \*[^{]*\{[^}]*animation-play-state:\s*paused/);
-  assert.match(html, /<script type="module" src="assets\/motion-toggle\.js"><\/script>/);
+  assert.ok(pageScripts(html).some((s) => s.src === "assets/motion-toggle.js" && s.module));
 });
 
 test("the privacy policy says each new sign-up is emailed to the team through Resend, a US processor", () => {
