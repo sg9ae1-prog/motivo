@@ -5,7 +5,7 @@ export const SIGNUP_ENDPOINT = "https://siqmhaubpiplaooqhkgz.supabase.co/functio
 const TIMEOUT_MS = 12000;
 /** Which wording sits under the email field, and which privacy policy it links to. Change both when either text changes. */
 export const CONSENT_VERSION = "2026-10-25.1";
-export const POLICY_VERSION = "2026-10-25";
+export const POLICY_VERSION = "2026-10-25.1";
 
 /**
  * Send one sign-up. `website` is the hidden field a person never fills.

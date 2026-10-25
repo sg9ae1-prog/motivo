@@ -31,7 +31,7 @@ test("the sign-up sends the wording version and the policy version it showed", a
 test("the privacy policy carries the version the form sends, and today's date", () => {
   assert.ok(privacy.includes(`Last updated: 25 October 2026`));
   assert.match(privacy, new RegExp(`Policy version:? ${POLICY_VERSION}`));
-  assert.equal(POLICY_VERSION, "2026-10-25");
+  assert.equal(POLICY_VERSION, "2026-10-25.1", "the version moved when Resend was added, so earlier sign-ups show which text they agreed to");
 });
 
 test("the privacy policy covers the early-access list: basis, withdrawal, retention, hosts, processors, transfers, controller", () => {
@@ -85,4 +85,10 @@ test("a keyboard-reachable pause control stops GSAP and CSS animation, and the p
   assert.match(js, /classList\.toggle\("motion-paused"/);
   assert.match(css, /\.motion-paused \*[^{]*\{[^}]*animation-play-state:\s*paused/);
   assert.match(html, /<script type="module" src="assets\/motion-toggle\.js"><\/script>/);
+});
+
+test("the privacy policy says each new sign-up is emailed to the team through Resend, a US processor", () => {
+  const privacy = read("privacy/index.html");
+  assert.match(privacy, /<li><strong>Resend:<\/strong>[^<]*early sign-up/i, "listed among the processors");
+  assert.match(privacy, /including GitHub, Resend,/, "named among the US transfers");
 });
