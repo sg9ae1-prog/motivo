@@ -118,6 +118,9 @@ html { scroll-snap-type: y mandatory; }
 /* The character's spot takes whatever height the copy leaves, with room above it for the message. */
 .hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 84px; } /* room for the corner button; the hello may tuck over the top of his hair */
 .hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the message */ container-type: inline-size; }
+/* Motivo drawn into the page itself, where the live one will stand, so the first screen shows him before any script loads */
+.poster { position: absolute; left: 50%; top: 50%; width: 150.6%; aspect-ratio: 520 / 515; transform: translate(-50%, -63.6%); pointer-events: none; }
+.poster svg { width: 100%; height: 100%; overflow: visible; display: block; }
 /* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the message. */
 .qm { position: absolute; left: var(--x); top: var(--y); font: 800 calc(var(--s) * 100cqw)/1 var(--font-head); color: var(--amber); opacity: .85;
   text-shadow: 0 0 24px rgba(245, 158, 11, .5); animation: qm 3s ease-in-out infinite; animation-delay: var(--d, 0s); will-change: transform; }

@@ -135,7 +135,7 @@ function frame() {
   curAnchor = a;
   const t = target(a);
   const ts = (t.d / .664) / W;
-  if (!st.init || REDUCED) { st.x = t.x; st.y = t.y; st.s = ts; st.init = true; }
+  if (!st.init || REDUCED) { st.x = t.x; st.y = t.y; st.s = ts; if (!st.init) { $(".poster")?.remove(); mo.hidden = false; } st.init = true; } // the live Motivo takes over from the page's picture
   const k = REDUCED ? 1 : .11;
   const px = st.x, py = st.y;
   st.x += (t.x - st.x) * k; st.y += (t.y - st.y) * k; st.s += (ts - st.s) * k;

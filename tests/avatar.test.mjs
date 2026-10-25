@@ -50,3 +50,31 @@ test("the ready-made drawings are small next to the library they replace on firs
   const kb = read("../assets/avatar-baked.js").length / 1024;
   assert.ok(kb < 120, `baked drawings are ${kb.toFixed(0)} KB before compression`);
 });
+
+// Motivo is in the page itself, so the first screen shows him before any script has downloaded.
+const css = read("../assets/landing.css");
+const poster = html.match(/<div class="poster" aria-hidden="true">(<svg[\s\S]*?<\/svg>)<\/div>/)?.[1];
+
+test("the first screen carries a ready-made picture of Motivo, identical to the live drawing", () => {
+  assert.ok(poster, "a picture sits in the page");
+  const meet = html.slice(html.indexOf('<section id="meet"'), html.indexOf("</section>", html.indexOf('<section id="meet"')));
+  assert.ok(meet.includes(poster), "inside the first screen's spot for him");
+  assert.equal(poster.replace(/-poster\b/g, ""), lib.render(HERO, 1000), "the same drawing the live Motivo starts as");
+  assert.doesNotMatch(poster, /id="(?![^"]*-poster")/, "its inner names never clash with the live drawing's");
+});
+
+test("the picture sits exactly where the live Motivo is placed: same width and the same point on the spot's centre", () => {
+  const rule = css.match(/^\.poster \{([^}]*)\}/m)?.[1] ?? "";
+  assert.match(rule, /width: 150\.6%/, "the live drawing is the spot's width divided by .664");
+  assert.match(rule, /aspect-ratio: 520 \/ 515/, "the live drawing's box");
+  assert.match(rule, /translate\(-50%, -63\.6%\)/, "the live drawing's anchor point");
+  assert.match(js, /W = 520/, "the live box is still 520 wide");
+  assert.match(css, /#mo \{[^}]*width: 520px; height: 515px;[^}]*transform-origin: 50% 63\.6%/, "and still anchored at the same point");
+});
+
+test("the picture leaves in the same frame the live Motivo is first placed, so he never shows twice", () => {
+  const init = js.match(/if \(!st\.init[^\n]*\n/)?.[0] ?? "";
+  assert.match(init, /\.poster/, "removed where the live one takes its first position");
+  assert.match(html, /<div id="mo" aria-hidden="true" hidden>/, "the live one's glow and ring stay out of sight until he is placed");
+  assert.match(init, /mo\.hidden = false/, "and appear where he is first placed");
+});
