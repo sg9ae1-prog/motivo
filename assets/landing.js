@@ -192,8 +192,10 @@ function placeSay(a) {
   const w = say.offsetWidth, h = say.offsetHeight;
   const S = st.s * W, R = S * .332, cx = st.x, cy = st.y;
   const gap = say.classList.contains("you") ? 48 : 16; // room below the message for Motivo's typing dots
+  // The message stays below the corner button while that button is showing.
+  const early = $(".early"), ceil = early.classList.contains("away") ? 12 : early.getBoundingClientRect().bottom + 8;
   // No room above the head: beside it would sit on the copy, so the line stays unsaid on this layout.
-  if (side === "top" && cy - .4 * S - h - gap < 12) { say.style.visibility = "hidden"; return; }
+  if (side === "top" && cy - .4 * S - h - gap < ceil) { say.style.visibility = "hidden"; return; }
   let l, t;
   if (side === "top") { l = cx - w / 2; t = cy - .4 * S - h - gap; }
   else { l = cx + R + gap; t = cy - h / 2; } // "right"
@@ -204,7 +206,7 @@ function placeSay(a) {
   // Hidden while its character is off screen.
   const off = cy - R < 0 || cy > innerHeight; // the head has left the screen
   say.style.visibility = off ? "hidden" : "visible";
-  say.style.left = cl + "px"; say.style.top = clamp(t, 12, innerHeight - h - 8) + "px";
+  say.style.left = cl + "px"; say.style.top = clamp(t, ceil, innerHeight - h - 8) + "px";
 }
 
 /* ---------------- blinking ---------------- */

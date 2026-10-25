@@ -116,7 +116,7 @@ html { scroll-snap-type: y mandatory; }
 
 /* ---------- 1–2. Hero and Meet Motivo ---------- */
 /* The character's spot takes whatever height the copy leaves, with room above it for the message. */
-.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 64px; }
+.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 136px; } /* room for the corner button, then Motivo's hello, above the head */
 .hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the message */ container-type: inline-size; }
 /* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the message. */
 .qm { position: absolute; left: var(--x); top: var(--y); font: 800 calc(var(--s) * 100cqw)/1 var(--font-head); color: var(--amber); opacity: .85;
