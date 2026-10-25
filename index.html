@@ -19,8 +19,7 @@
   <meta name="twitter:image" content="https://sg9ae1-prog.github.io/motivo/assets/img/og.png">
   <meta name="theme-color" content="#05080f">
   <link rel="icon" href="assets/img/logo-mark.png">
-  <!-- Start the slowest downloads as the page opens: the character's drawing code and the three fonts. -->
-  <link rel="preload" href="assets/bigheads.js" as="script">
+  <!-- The three fonts start downloading as the page opens, so the headline doesn't repaint in a fallback font. -->
   <link rel="preload" href="assets/fonts/baloo-2-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/nunito-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/nunito-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>

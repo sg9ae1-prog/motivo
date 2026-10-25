@@ -24,8 +24,8 @@ test("the logo is a small file, not a full-size picture shrunk on screen", () =>
   assert.ok(kb < 16, `logo is ${kb.toFixed(0)} KB`);
 });
 
-test("the character's drawing code and the fonts start downloading as the page opens", () => {
-  for (const f of ["assets/bigheads.js", "baloo-2-latin-800-normal.woff2", "nunito-latin-700-normal.woff2", "nunito-latin-900-normal.woff2"])
+test("the fonts start downloading as the page opens", () => {
+  for (const f of ["baloo-2-latin-800-normal.woff2", "nunito-latin-700-normal.woff2", "nunito-latin-900-normal.woff2"])
     assert.match(html, new RegExp(`<link rel="preload"[^>]*${f.replace(/[.]/g, "\\.")}`), `${f} is preloaded`);
   assert.ok(html.indexOf('rel="preload"') < html.indexOf('rel="stylesheet"'), "preloads come before the stylesheets");
 });
