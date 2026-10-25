@@ -29,10 +29,12 @@ html { scroll-snap-type: y mandatory; }
 
 /* Sky */
 .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.sky i { position: absolute; border-radius: 50%; filter: blur(90px); }
-.sky .g1 { width: 60vmax; height: 60vmax; left: -25vmax; top: -10vmax; background: radial-gradient(closest-side, rgba(45, 212, 191, .28), transparent); }
-.sky .g2 { width: 55vmax; height: 55vmax; right: -28vmax; top: 35vh; background: radial-gradient(closest-side, rgba(245, 158, 11, .17), transparent); }
-.sky .g3 { width: 50vmax; height: 50vmax; left: 5vmax; bottom: -30vmax; background: radial-gradient(closest-side, rgba(13, 148, 136, .25), transparent); }
+/* The glows' soft fade is painted by the script beside them in the page, as a 90px blur would draw it: iPhone Safari
+   freezes the whole page for ~15s drawing a real blur that large. The padding is room for the fade beyond each glow's edge. */
+.sky i { position: absolute; border-radius: 50%; box-sizing: content-box; padding: 270px; margin: -270px; background: radial-gradient(closest-side, rgba(var(--rgb), var(--a)), transparent); }
+.sky .g1 { width: 60vmax; height: 60vmax; left: -25vmax; top: -10vmax; --rgb: 45, 212, 191; --a: .28; }
+.sky .g2 { width: 55vmax; height: 55vmax; right: -28vmax; top: 35vh; --rgb: 245, 158, 11; --a: .17; }
+.sky .g3 { width: 50vmax; height: 50vmax; left: 5vmax; bottom: -30vmax; --rgb: 13, 148, 136; --a: .25; }
 .sky b { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; opacity: .5; animation: tw 4s ease-in-out infinite; }
 @keyframes tw { 50% { opacity: .08; transform: scale(.6); } }
 

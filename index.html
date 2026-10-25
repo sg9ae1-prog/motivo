@@ -178,10 +178,12 @@ html { scroll-snap-type: y mandatory; }
 
 /* Sky */
 .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.sky i { position: absolute; border-radius: 50%; filter: blur(90px); }
-.sky .g1 { width: 60vmax; height: 60vmax; left: -25vmax; top: -10vmax; background: radial-gradient(closest-side, rgba(45, 212, 191, .28), transparent); }
-.sky .g2 { width: 55vmax; height: 55vmax; right: -28vmax; top: 35vh; background: radial-gradient(closest-side, rgba(245, 158, 11, .17), transparent); }
-.sky .g3 { width: 50vmax; height: 50vmax; left: 5vmax; bottom: -30vmax; background: radial-gradient(closest-side, rgba(13, 148, 136, .25), transparent); }
+/* The glows' soft fade is painted by the script beside them in the page, as a 90px blur would draw it: iPhone Safari
+   freezes the whole page for ~15s drawing a real blur that large. The padding is room for the fade beyond each glow's edge. */
+.sky i { position: absolute; border-radius: 50%; box-sizing: content-box; padding: 270px; margin: -270px; background: radial-gradient(closest-side, rgba(var(--rgb), var(--a)), transparent); }
+.sky .g1 { width: 60vmax; height: 60vmax; left: -25vmax; top: -10vmax; --rgb: 45, 212, 191; --a: .28; }
+.sky .g2 { width: 55vmax; height: 55vmax; right: -28vmax; top: 35vh; --rgb: 245, 158, 11; --a: .17; }
+.sky .g3 { width: 50vmax; height: 50vmax; left: 5vmax; bottom: -30vmax; --rgb: 13, 148, 136; --a: .25; }
 .sky b { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; opacity: .5; animation: tw 4s ease-in-out infinite; }
 @keyframes tw { 50% { opacity: .08; transform: scale(.6); } }
 
@@ -546,6 +548,31 @@ html { scroll-snap-type: y mandatory; }
 </head>
 <body class="landing">
   <div class="sky" id="sky" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+  <script>
+    // The background glows, painted as the fade a 90px blur would make of them, without a blur: iPhone Safari freezes ~15s drawing one.
+    (() => {
+      const SIGMA = 90, REACH = 3 * SIGMA, STOPS = 28;
+      // e^-x·I0(x), Abramowitz & Stegun 9.8.1–2
+      const i0e = (x) => {
+        if (x < 3.75) { const t = (x / 3.75) ** 2; return Math.exp(-x) * (1 + t * (3.5156229 + t * (3.0899424 + t * (1.2067492 + t * (.2659732 + t * (.0360768 + t * .0045813)))))); }
+        const t = 3.75 / x; return (.39894228 + t * (.01328592 + t * (.00225319 + t * (-.00157565 + t * (.00916281 + t * (-.02057706 + t * (.02635537 + t * (-.01647633 + t * .00392377)))))))) / Math.sqrt(x);
+      };
+      // How strong the blurred glow is at distance r from its centre, for a glow that fades evenly to nothing at radius R.
+      const blurred = (r, R) => {
+        let sum = 0; const n = 240, d = R / n;
+        for (let k = 0; k < n; k++) { const p = (k + .5) * d; sum += (1 - p / R) * (p / SIGMA ** 2) * Math.exp(-((r - p) ** 2) / (2 * SIGMA ** 2)) * i0e((r * p) / SIGMA ** 2) * d; }
+        return sum;
+      };
+      const paint = () => {
+        for (const el of document.querySelectorAll(".sky i")) {
+          const [rgb, alpha] = [getComputedStyle(el).getPropertyValue("--rgb"), getComputedStyle(el).getPropertyValue("--a")], R = el.offsetWidth / 2 - REACH;
+          const stops = Array.from({ length: STOPS + 1 }, (_, k) => { const r = ((R + REACH) * k) / STOPS; return `rgba(${rgb}, ${(alpha * blurred(r, R)).toFixed(4)}) ${r.toFixed(1)}px`; });
+          el.style.background = `radial-gradient(circle closest-side, ${stops.join(", ")})`;
+        }
+      };
+      paint(); addEventListener("resize", paint);
+    })();
+  </script>
 
   <!-- The character: one live Motivo that travels with the reader from section to section. -->
   <div id="mo" aria-hidden="true" hidden>

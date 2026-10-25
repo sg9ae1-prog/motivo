@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, statSync } from "node:fs";
+import vm from "node:vm";
 import { pageScripts } from "./pages.mjs";
 
 // The first screen on a phone: Motivo's hello must show whole, and the page must arrive quickly on a phone network.
@@ -40,6 +41,24 @@ test("the page's styles are written into it, matching the style files", async ()
   const style = html.match(/<style>([\s\S]*?)<\/style>/)?.[1];
   assert.equal(style, pageStyles(), "stale: run node tools/inline-styles.mjs");
   assert.match(style, /url\("assets\/fonts\/baloo-2-latin-800-normal\.woff2"\)/, "file addresses are rewritten for the page's own folder");
+});
+
+test("no blur on the page is large: iPhone Safari froze the whole page for about 15 seconds drawing the glows' 90px one", () => {
+  for (const [, px] of css.matchAll(/blur\((\d+)px\)/g))
+    assert.ok(+px <= 12, `a ${px}px blur; paint the fade it would make instead`);
+});
+
+test("the background glows fade exactly as the 90px blur they replace did, on a phone and on a wide screen", () => {
+  const script = html.slice(html.indexOf('<div class="sky"')).match(/^<div[^\n]*<\/div>\s*<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(script, "painted right after the glows, before the first screen is drawn");
+  // Reference: a radial fade to nothing at radius R, convolved in 2D with a Gaussian of 90px (scipy), at r = 0, R, R + 90px.
+  for (const [R, want] of [[253, [.556, .106, .021]], [576, [.804, .056, .011]]]) {
+    const glow = { offsetWidth: 2 * R + 540, style: {} };
+    vm.runInNewContext(script, { document: { querySelectorAll: () => [glow] }, getComputedStyle: () => ({ getPropertyValue: (v) => (v === "--a" ? "1" : "0, 0, 0") }), addEventListener() {} });
+    const stops = [...glow.style.background.matchAll(/rgba\(0, 0, 0, ([\d.]+)\) ([\d.]+)px/g)].map(([, a, r]) => [+r, +a]);
+    const at = (r) => { const i = stops.findIndex(([x]) => x >= r); const [[r0, a0], [r1, a1]] = [stops[Math.max(i - 1, 0)], stops[i]]; return r1 === r0 ? a1 : a0 + ((a1 - a0) * (r - r0)) / (r1 - r0); };
+    [0, R, R + 90].forEach((r, i) => assert.ok(Math.abs(at(r) - want[i]) < .006, `R ${R}, r ${r}: ${at(r).toFixed(3)} vs ${want[i]}`));
+  }
 });
 
 test("nothing competes with the first screen: no early downloads, and no script tag downloads with the page", () => {
