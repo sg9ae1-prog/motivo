@@ -120,7 +120,7 @@ html { scroll-snap-type: y mandatory; }
 
 /* ---------- 1–2. Hero and Meet Motivo ---------- */
 /* The character's spot takes whatever height the copy leaves, with room above it for the message. */
-.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 84px; } /* room for the corner button; the hello may tuck over the top of his hair */
+.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 104px; } /* room for the corner button and the hello, which may tuck over the top of his hair */
 .hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the message */ container-type: inline-size; }
 /* Motivo drawn into the page itself, where the live one will stand, so the first screen shows him before any script loads */
 .poster { position: absolute; left: 50%; top: 50%; width: 150.6%; aspect-ratio: 520 / 515; transform: translate(-50%, -63.6%); pointer-events: none; --u: calc(100cqw * 1.506 / 520); }
@@ -134,13 +134,14 @@ html { scroll-snap-type: y mandatory; }
 .qm:nth-child(4) { --x: 108%; --y: 58%; --s: .28; --r: -10deg; --d: -.5s; }
 @keyframes qm { 50% { transform: translateY(-12px) rotate(var(--r, 0deg)); } }
 .hook, .meet-copy { padding-inline: var(--gut); }
-.meet-copy .brand { margin-bottom: 14px; }
-.meet-copy .brand img { width: 64px; height: 64px; filter: drop-shadow(0 0 12px rgba(45, 212, 191, .6)); }
+.meet-copy .brand { margin-bottom: 8px; }
+.meet-copy .brand img { width: min(64px, 8svh); height: min(64px, 8svh); filter: drop-shadow(0 0 12px rgba(45, 212, 191, .6)); }
 .hook h2 { font-size: clamp(36px, 10.4vw, 54px); }
 .hook .line { display: block; }
 .hook .lede { font: 800 clamp(19px, 5.2vw, 26px)/1.15 var(--font-head); color: var(--text); margin: 12px 0 18px; max-width: 26ch; }
-.meet-copy { padding-block: 4svh 6svh; }
-.meet-copy h1 { font-size: clamp(58px, 17vw, 84px); }
+/* On a short phone the copy shrinks rather than Motivo, and always clears the pause button in the corner. */
+.meet-copy { padding-block: 2svh 64px; }
+.meet-copy h1 { font-size: clamp(46px, min(17vw, 9svh), 84px); }
 .meet-copy p { font: 800 clamp(24px, 6.6vw, 34px)/1.1 var(--font-head); color: var(--text-muted); margin-top: 12px; }
 .meet-copy .meet-what { display: none; font-family: var(--font-body); font-weight: 700; font-size: clamp(15px, 4.2vw, 19px); line-height: 1.3; max-width: 28ch; margin-top: 8px; }
 .scrollcue { position: absolute; left: 50%; bottom: calc(1.4svh + env(safe-area-inset-bottom)); margin-left: -12px; width: 24px; height: 36px;

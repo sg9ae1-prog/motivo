@@ -12,9 +12,17 @@ const html = read("../index.html");
 
 test("on a phone, Motivo stays big: little room is reserved above his head, and the hello may tuck over his hair", () => {
   const pad = Number(css.match(/^\.hero-char \{[^}]*padding-top: (\d+)px/m)?.[1]);
-  assert.ok(pad <= 90, `phone padding above the character is ${pad}px; more shrinks him`);
+  assert.ok(pad <= 110, `phone padding above the character is ${pad}px; more shrinks him`);
   const place = js.slice(js.indexOf("function placeSay"), js.indexOf("/* ---------------- blinking"));
   assert.match(place, /tuck = \.1 \* S/, "the message may overlap the top tenth of his drawing, never his face");
+});
+
+test("on a short phone, the copy shrinks instead of Motivo: the hello fits above him and the copy clears the pause button", () => {
+  const rule = (sel) => css.match(new RegExp(`^${sel.replace(/[.]/g, "\\.")} \\{([^}]*)\\}`, "m"))?.[1] ?? "";
+  assert.ok(+rule(".hero-char").match(/padding-top: (\d+)px/)?.[1] >= 104, "room for the corner button and the hello above his head");
+  assert.match(rule(".meet-copy"), /padding-block: 2svh 64px/, "the pause button is 44px tall, 12px from the bottom, plus a gap");
+  assert.match(rule(".meet-copy h1"), /font-size: clamp\(46px, min\(17vw, 9svh\), 84px\)/, "the heading shrinks with the screen's height");
+  assert.match(rule(".meet-copy .brand img"), /width: min\(64px, 8svh\); height: min\(64px, 8svh\)/, "and so does the logo");
 });
 
 test("on a phone, the first screen's copy is the name and 'Your friendly guide.' only; the longer line shows on desktop", () => {
