@@ -116,7 +116,7 @@ html { scroll-snap-type: y mandatory; }
 
 /* ---------- 1–2. Hero and Meet Motivo ---------- */
 /* The character's spot takes whatever height the copy leaves, with room above it for the message. */
-.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 136px; } /* room for the corner button, then Motivo's hello, above the head */
+.hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 84px; } /* room for the corner button; the hello may tuck over the top of his hair */
 .hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the message */ container-type: inline-size; }
 /* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the message. */
 .qm { position: absolute; left: var(--x); top: var(--y); font: 800 calc(var(--s) * 100cqw)/1 var(--font-head); color: var(--amber); opacity: .85;
@@ -135,7 +135,7 @@ html { scroll-snap-type: y mandatory; }
 .meet-copy { padding-block: 4svh 6svh; }
 .meet-copy h1 { font-size: clamp(58px, 17vw, 84px); }
 .meet-copy p { font: 800 clamp(24px, 6.6vw, 34px)/1.1 var(--font-head); color: var(--text-muted); margin-top: 12px; }
-.meet-copy .meet-what { font-family: var(--font-body); font-weight: 700; font-size: clamp(15px, 4.2vw, 19px); line-height: 1.3; max-width: 28ch; margin-top: 8px; }
+.meet-copy .meet-what { display: none; font-family: var(--font-body); font-weight: 700; font-size: clamp(15px, 4.2vw, 19px); line-height: 1.3; max-width: 28ch; margin-top: 8px; }
 .scrollcue { position: absolute; left: 50%; bottom: calc(1.4svh + env(safe-area-inset-bottom)); margin-left: -12px; width: 24px; height: 36px;
   border: 2px solid rgba(255, 255, 255, .35); border-radius: 14px; display: none; }
 .scrollcue::after { content: ""; position: absolute; left: 50%; top: 7px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px;
@@ -338,7 +338,7 @@ html { scroll-snap-type: y mandatory; }
   .hook .lede { font-size: clamp(24px, 2vw, 32px); margin: 20px 0 30px; }
   .meet-copy h1 { font-size: clamp(100px, 10vw, 180px); }
   .meet-copy p { font-size: clamp(32px, 2.6vw, 44px); }
-  .meet-copy .meet-what { font-size: clamp(19px, 1.5vw, 24px); max-width: 36ch; }
+  .meet-copy .meet-what { display: block; font-size: clamp(19px, 1.5vw, 24px); max-width: 36ch; }
   .scrollcue { display: block; }
   .railwrap { display: grid; grid-template-columns: minmax(300px, 40%) 1fr; gap: 4vw; align-items: start; }
   .rail { height: 100vh; height: 100svh; margin: 0; padding: 0; background: none; }

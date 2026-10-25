@@ -8,9 +8,17 @@ const css = read("../assets/landing.css");
 const js = read("../assets/landing.js");
 const html = read("../index.html");
 
-test("on a phone, the first screen leaves room above Motivo's head for the corner button and the hello", () => {
+test("on a phone, Motivo stays big: little room is reserved above his head, and the hello may tuck over his hair", () => {
   const pad = Number(css.match(/^\.hero-char \{[^}]*padding-top: (\d+)px/m)?.[1]);
-  assert.ok(pad >= 120, `phone padding above the character is ${pad}px`);
+  assert.ok(pad <= 90, `phone padding above the character is ${pad}px; more shrinks him`);
+  const place = js.slice(js.indexOf("function placeSay"), js.indexOf("/* ---------------- blinking"));
+  assert.match(place, /tuck = \.1 \* S/, "the message may overlap the top tenth of his drawing, never his face");
+});
+
+test("on a phone, the first screen's copy is the name and 'Your friendly guide.' only; the longer line shows on desktop", () => {
+  assert.match(css, /^\.meet-copy \.meet-what \{[^}]*display: none/m, "hidden on phones, where every line shrinks Motivo");
+  assert.match(css, /^\s+\.meet-copy \.meet-what \{[^}]*display: block/m, "shown on desktop");
+  assert.match(html, /class="[^"]*\bmeet-what\b/, "still in the page for search engines, and for screen readers on desktop");
 });
 
 test("the message never rises behind the corner button while that button is showing", () => {

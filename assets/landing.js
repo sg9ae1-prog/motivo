@@ -178,8 +178,9 @@ function placeSay(a) {
   const gap = say.classList.contains("you") ? 48 : 16; // room below the message for Motivo's typing dots
   // The message stays below the corner button while that button is showing.
   const early = $(".early"), ceil = early.classList.contains("away") ? 12 : early.getBoundingClientRect().bottom + 8;
-  // No room above the head: beside it would sit on the copy, so the line stays unsaid on this layout.
-  if (side === "top" && cy - .4 * S - h - gap < ceil) { say.style.visibility = "hidden"; return; }
+  // The message may tuck over the top of his hair, never his face; with less room than that it stays unsaid.
+  const tuck = .1 * S;
+  if (side === "top" && cy - .4 * S + tuck - h - gap < ceil) { say.style.visibility = "hidden"; return; }
   let l, t;
   if (side === "top") { l = cx - w / 2; t = cy - .4 * S - h - gap; }
   else { l = cx + R + gap; t = cy - h / 2; } // "right"
