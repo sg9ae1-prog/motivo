@@ -6,7 +6,7 @@ import { pageScripts } from "./pages.mjs";
 // The first screen on a phone: Motivo's hello must show whole, and the page must arrive quickly on a phone network.
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
 const css = read("../assets/landing.css");
-const js = read("../assets/landing.js");
+const js = read("../assets/character.js");
 const html = read("../index.html");
 
 test("on a phone, Motivo stays big: little room is reserved above his head, and the hello may tuck over his hair", () => {
@@ -42,24 +42,62 @@ test("the page's styles are written into it, matching the style files", async ()
   assert.match(style, /url\("assets\/fonts\/baloo-2-latin-800-normal\.woff2"\)/, "file addresses are rewritten for the page's own folder");
 });
 
-test("nothing competes with the first screen: no early downloads, and every script starts after the page has shown", () => {
-  assert.doesNotMatch(html, /rel="(?:preload|modulepreload)"/);
-  assert.doesNotMatch(html, /<script[^>]*\ssrc=/, "no script tag downloads with the page");
-  assert.deepEqual(pageScripts(html).map((s) => s.src), [
-    "assets/signup-init.js", "assets/fit-screens.js", "assets/step-screens.js",
-    "assets/vendor/gsap.min.js", "assets/vendor/ScrollTrigger.min.js", "assets/vendor/confetti.browser.min.js",
-    "assets/landing.js", "assets/motion-toggle.js",
-  ]);
-  assert.deepEqual(pageScripts(html).filter((s) => !s.module).map((s) => s.src), ["assets/vendor/gsap.min.js", "assets/vendor/ScrollTrigger.min.js", "assets/vendor/confetti.browser.min.js"]);
+test("nothing competes with the first screen: no early downloads, and no script tag downloads with the page", () => {
+  assert.doesNotMatch(html, /<link[^>]*rel="(?:preload|modulepreload)"/);
+  assert.doesNotMatch(html, /<script[^>]*\ssrc=/);
 });
 
-test("the late scripts run in the listed order, so the character's script finds its animation libraries", () => {
+test("every screen is complete moments after the first one shows: the character and the page's content need no animation library", () => {
+  const lane = (name) => pageScripts(html).filter((s) => s.lane === name).map((s) => s.src);
+  assert.deepEqual(lane("first-screen"), [
+    "assets/fit-screens.js", "assets/page-content.js", "assets/character.js", "assets/customiser.js",
+    "assets/signup-init.js", "assets/step-screens.js", "assets/motion-toggle.js",
+  ]);
+  assert.deepEqual(lane("after-load"), ["assets/vendor/gsap.min.js", "assets/vendor/ScrollTrigger.min.js", "assets/vendor/confetti.browser.min.js", "assets/landing.js"]);
+  assert.ok(pageScripts(html).every((s) => s.module === !s.src.includes("/vendor/")));
+  for (const f of ["character.js", "customiser.js", "page-content.js", "motion.js"])
+    assert.doesNotMatch(read(`../assets/${f}`), /\bgsap\b|\bScrollTrigger\b|\bconfetti\.create\b/, `${f} works before the libraries arrive`);
+});
+
+test("the first lane starts once the first screen is drawn, the second once the page has loaded, each in its listed order", () => {
   const loader = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((s) => s.includes('addEventListener("load"'));
+  assert.match(loader, /requestAnimationFrame\(\(\) => setTimeout\(/, "after the first paint, not before it");
   assert.match(loader, /\.async = false/, "added scripts otherwise run in whatever order they finish downloading");
   assert.doesNotMatch(loader, /if[^;]*async = false/, "for modules as well as classic scripts");
+});
+
+test("the first lane asks for everything it imports at once, instead of finding each import one slow round trip after another", () => {
+  const loader = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((s) => s.includes('addEventListener("load"'));
+  const asked = [...(loader.match(/const imports = \[([^\]]*)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  assert.match(loader, /rel = "modulepreload"/);
+  const first = pageScripts(html).filter((s) => s.lane === "first-screen").map((s) => s.src);
+  const needed = new Set(), walk = (src) => {
+    for (const [, dep] of read(`../${src}`).matchAll(/^import[^"]*"\.\/([^"]+)"/gm)) {
+      const path = `assets/${dep}`;
+      if (!needed.has(path)) { needed.add(path); walk(path); }
+    }
+  };
+  first.forEach(walk);
+  assert.deepEqual(asked.sort(), [...needed].filter((s) => !first.includes(s)).sort());
+});
+
+test("entrances that arrive late never hide what the reader has already reached", () => {
+  const late = read("../assets/landing.js");
+  const body = late.slice(late.indexOf("function revealReached"));
+  assert.match(body, /ScrollTrigger\.getAll\(\)/);
+  assert.match(body, /getBoundingClientRect\(\)\.top < innerHeight/, "anything on screen or above it");
+  assert.match(body, /progress\(1\)/, "is shown in its final state at once");
+  assert.match(late, /revealReached\(\);\s*$/, "after every entrance is set up");
 });
 
 test("no script waits for the page's load event: they all arrive after it, so it would never come", () => {
   for (const f of readdirSync(new URL("../assets/", import.meta.url)).filter((f) => f.endsWith(".js") && f !== "bigheads.js"))
     assert.doesNotMatch(read(`../assets/${f}`), /addEventListener\("load"/, f);
+});
+
+test("fixed drawings are in the page itself, so a screen never grows or shifts when the scripts arrive", () => {
+  const chords = html.match(/<div class="chords" id="chords"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/)?.[1] ?? "";
+  assert.equal((chords.match(/<div class="chord">/g) ?? []).length, 3, "the three chord shapes");
+  assert.equal((html.match(/<div class="wave" data-wave>((?:<i [^>]*><\/i>){22})<\/div>/)?.[1].match(/<i /g) ?? []).length, 22, "the voice bars");
+  assert.doesNotMatch(read("../assets/page-content.js"), /#chords|data-wave/, "no script draws them");
 });

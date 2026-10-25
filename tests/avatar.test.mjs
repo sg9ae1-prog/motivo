@@ -8,7 +8,7 @@ import { BAKED } from "../assets/avatar-baked.js";
 // Motivo arrives with the page as ready-made drawings; the 370 KB drawing library is only needed once the reader restyles him.
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
 const html = read("../index.html");
-const js = read("../assets/landing.js");
+const js = read("../assets/character.js");
 
 globalThis.window = globalThis;
 vm.runInThisContext(read("../assets/bigheads.js"));
@@ -48,7 +48,8 @@ test("the ready-made drawings are small next to the library they replace on firs
 
 // Motivo is in the page itself, so the first screen shows him before any script has downloaded.
 const css = read("../assets/landing.css");
-const poster = html.match(/<div class="poster" aria-hidden="true">(<svg[\s\S]*?<\/svg>)<\/div>/)?.[1];
+const posterBlock = html.match(/<div class="poster" aria-hidden="true">[\s\S]*?<div class="sheen"><\/div><\/div>/)?.[0] ?? "";
+const poster = posterBlock.match(/<svg[\s\S]*?<\/svg>/)?.[0];
 
 test("the first screen carries a ready-made picture of Motivo, identical to the live drawing", () => {
   assert.ok(poster, "a picture sits in the page");
@@ -72,4 +73,20 @@ test("the picture leaves in the same frame the live Motivo is first placed, so h
   assert.match(init, /\.poster/, "removed where the live one takes its first position");
   assert.match(html, /<div id="mo" aria-hidden="true" hidden>/, "the live one's glow and ring stay out of sight until he is placed");
   assert.match(init, /mo\.hidden = false/, "and appear where he is first placed");
+});
+
+test("the picture carries the live Motivo's glow, ring and sheen, sized by the same unit, so the hand-over can't be seen", () => {
+  assert.match(posterBlock, /^<div class="poster" aria-hidden="true"><div class="glow"><\/div><div class="ring"><\/div><svg[\s\S]*<\/svg><div class="sheen"><\/div><\/div>$/, "in the live Motivo's order");
+  for (const [live, still] of [["#mo-glow", ".poster > .glow"], ["#mo-ring", ".poster > .ring"], ["#mo-sheen", ".poster > .sheen"]])
+    assert.match(css, new RegExp(`^${live}, ${still.replace(/[.>]/g, "\\$&")} \\{`, "m"), `${still} shares ${live}'s look`);
+  assert.match(css, /#mo \{[^}]*--u: 1px/, "the live one's unit is a pixel of its 520-wide box");
+  assert.match(css, /^\.poster \{[^}]*--u: calc\(100cqw \* 1\.506 \/ 520\)/m, "the picture's unit is a pixel of its own box, at its size");
+  const ring = css.match(/^#mo-ring, [^{]*\{([^}]*)\}/m)?.[1] ?? "";
+  assert.doesNotMatch(ring, /\d+px/, "the ring's lines scale with whichever box draws it");
+});
+
+test("the drawing library is fetched only as the reader nears the restyling controls, never competing with the page's own loading", () => {
+  const custom = read("../assets/customiser.js");
+  assert.doesNotMatch(custom, /requestIdleCallback/, "an idle moment can come while the page is still loading");
+  assert.match(custom, /IntersectionObserver\([\s\S]{0,200}avatar\.ready\(\)[\s\S]{0,200}rootMargin: "100% 0px"[\s\S]{0,80}observe\(\$\("#yours"\)\)/, "a screen ahead of the controls");
 });

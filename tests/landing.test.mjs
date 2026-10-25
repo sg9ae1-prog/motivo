@@ -13,7 +13,7 @@ const text = html
 
 const section = (id) => html.match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?</section>`, "i"))[0];
 const css = readFileSync(new URL("../assets/landing.css", import.meta.url), "utf8");
-const js = readFileSync(new URL("../assets/landing.js", import.meta.url), "utf8");
+const js = readFileSync(new URL("../assets/character.js", import.meta.url), "utf8");
 
 test("hero copy is verbatim", () => {
   assert.ok(text.includes("The friend who never gives up on you."));

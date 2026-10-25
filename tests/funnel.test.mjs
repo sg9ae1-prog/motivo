@@ -55,7 +55,7 @@ test("Privacy is a locked phone and four short tiles", () => {
 });
 
 test("the corner button steps aside on the sign-up screen, where the form itself is", () => {
-  const js = readFileSync(new URL("../assets/landing.js", import.meta.url), "utf8");
+  const js = readFileSync(new URL("../assets/page-content.js", import.meta.url), "utf8");
   assert.match(js, /IntersectionObserver[\s\S]{0,300}\.early[\s\S]{0,200}classList\.toggle\("away"/);
   assert.match(css, /\.early\.away\s*\{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/);
 });

@@ -7,7 +7,7 @@ import { pageScripts } from "./pages.mjs";
 // The hero's look and feel, and keyboard paging, as asked for after the first review of the page.
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
 const css = read("../assets/landing.css");
-const js = read("../assets/landing.js");
+const js = read("../assets/character.js");
 const html = read("../index.html");
 
 test("the hero's question is a chat message from the reader, with Motivo typing back", () => {

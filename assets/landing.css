@@ -44,22 +44,24 @@ html { scroll-snap-type: y mandatory; }
 .kick b { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--teal-glow); color: #04211e; font-size: 13px; letter-spacing: 0; }
 
 /* ---------- The character ---------- */
-#mo { position: fixed; left: 0; top: 0; width: 520px; height: 515px; z-index: 30; pointer-events: none; transform-origin: 50% 63.6%; will-change: transform; }
+/* The live Motivo and the first screen's picture of him share these looks; --u is one pixel of his 520-wide box at the size each is drawn. */
+#mo { position: fixed; left: 0; top: 0; width: 520px; height: 515px; z-index: 30; pointer-events: none; transform-origin: 50% 63.6%; will-change: transform; --u: 1px; }
 #mo-squash, #mo-tilt { position: absolute; inset: 0; transform-origin: 50% 63.6%; }
 #mo-float { position: absolute; inset: 0; animation: flo 3.6s ease-in-out infinite; }
 @keyframes flo { 50% { transform: translateY(-14px); } }
 #mo-jump { position: absolute; inset: 0; }
-#mo-glow { position: absolute; left: 50%; top: 63.6%; width: 112%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+#mo-glow, .poster > .glow { position: absolute; left: 50%; top: 63.6%; width: 112%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
   background: radial-gradient(closest-side, color-mix(in srgb, var(--ring) 55%, transparent) 0%, color-mix(in srgb, var(--ring) 22%, transparent) 55%, transparent 100%);
   animation: pul 3.6s ease-in-out infinite; transition: background .6s; }
 @keyframes pul { 50% { opacity: .62; transform: translate(-50%, -50%) scale(.94); } }
-#mo-ring { position: absolute; left: 50%; top: 63.6%; width: 71.4%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 55%, transparent), 0 0 60px color-mix(in srgb, var(--ring) 70%, transparent), inset 0 0 40px color-mix(in srgb, var(--ring) 35%, transparent);
+#mo-ring, .poster > .ring { position: absolute; left: 50%; top: 63.6%; width: 71.4%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+  box-shadow: 0 0 0 calc(3 * var(--u)) color-mix(in srgb, var(--ring) 55%, transparent), 0 0 calc(60 * var(--u)) color-mix(in srgb, var(--ring) 70%, transparent), inset 0 0 calc(40 * var(--u)) color-mix(in srgb, var(--ring) 35%, transparent);
   transition: box-shadow .6s; }
-#mo-sheen { position: absolute; left: 50%; top: 63.6%; width: 71.4%; aspect-ratio: 1; transform: translate(-50%, -50%) rotate(-30deg); border-radius: 50%;
+#mo-sheen, .poster > .sheen { position: absolute; left: 50%; top: 63.6%; width: 71.4%; aspect-ratio: 1; transform: translate(-50%, -50%) rotate(-30deg); border-radius: 50%;
   background: radial-gradient(ellipse 45% 18% at 50% 8%, rgba(255, 255, 255, .4), transparent 70%); mix-blend-mode: soft-light; opacity: .7; }
-#mo-svg { position: absolute; inset: 0; }
-#mo-svg svg { width: 100%; height: 100%; overflow: visible; display: block; }
+#mo-svg, .poster > svg { position: absolute; inset: 0; }
+#mo-svg g.blink { transform-origin: 500px 555px; } /* blinks close toward the eyes' midline */
+#mo-svg svg, .poster > svg { width: 100%; height: 100%; overflow: visible; display: block; }
 
 #say { position: fixed; left: 0; top: 0; z-index: 35; pointer-events: none; max-width: min(240px, 64vw); padding: 11px 16px 12px; border-radius: 20px;
   background: #fff; color: var(--ink-dark); font: 900 15px/1.25 var(--font-body);
@@ -119,8 +121,8 @@ html { scroll-snap-type: y mandatory; }
 .hero-char { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding-top: 84px; } /* room for the corner button; the hello may tuck over the top of his hair */
 .hero-char .anchor { position: relative; width: min(50vw, 220px, 100cqh - 24px); /* leaves room above the head for the message */ container-type: inline-size; }
 /* Motivo drawn into the page itself, where the live one will stand, so the first screen shows him before any script loads */
-.poster { position: absolute; left: 50%; top: 50%; width: 150.6%; aspect-ratio: 520 / 515; transform: translate(-50%, -63.6%); pointer-events: none; }
-.poster svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.poster { position: absolute; left: 50%; top: 50%; width: 150.6%; aspect-ratio: 520 / 515; transform: translate(-50%, -63.6%); pointer-events: none; --u: calc(100cqw * 1.506 / 520); }
+.poster > .glow { animation: none; } /* still, as the live glow is in the frame he takes over */
 /* Question marks float beside the character, inside its spot, so they never reach the copy, the logo or the message. */
 .qm { position: absolute; left: var(--x); top: var(--y); font: 800 calc(var(--s) * 100cqw)/1 var(--font-head); color: var(--amber); opacity: .85;
   text-shadow: 0 0 24px rgba(245, 158, 11, .5); animation: qm 3s ease-in-out infinite; animation-delay: var(--d, 0s); will-change: transform; }

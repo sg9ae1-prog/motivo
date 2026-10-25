@@ -116,7 +116,7 @@ test("the forms are wired on their own, without the character script, and tell t
 
 test("the sign-up loads independently of the character and its libraries", () => {
   const html = readPage("index.html");
-  assert.deepEqual(pageScripts(html)[0], { src: "assets/signup-init.js", module: true }, "first, ahead of the character and its libraries");
+  assert.deepEqual(pageScripts(html).find((s) => s.src === "assets/signup-init.js"), { src: "assets/signup-init.js", module: true, lane: "first-screen" }, "with the first screen, never waiting on the animation libraries");
   const init = readFileSync(new URL("../assets/signup-init.js", import.meta.url), "utf8");
   const imports = [...init.matchAll(/import[^"']*["']([^"']+)["']/g)].map((m) => m[1]);
   assert.deepEqual(imports, ["./signup.js"]);

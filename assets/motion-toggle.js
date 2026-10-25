@@ -1,6 +1,6 @@
 // A visible pause / resume control for the page's animation (WCAG 2.2.2).
-// Pauses GSAP's global timeline, and every CSS animation through a class on <html>.
-// People who asked their device for less motion already get a still page (landing.js, the "rm" class); the control still works for them.
+// Pauses GSAP's global timeline once it has arrived (landing.js checks the class then), and every CSS animation through a class on <html>.
+// People who asked their device for less motion already get a still page (motion.js, the "rm" class); the control still works for them.
 
 const root = document.documentElement;
 const button = document.createElement("button");

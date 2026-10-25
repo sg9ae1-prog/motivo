@@ -1,4 +1,4 @@
-// Draws Motivo. Ready-made drawings cover the page as it first appears; the drawing library loads in the background for restyling.
+// Draws Motivo. Ready-made drawings cover the page as it first appears; the drawing library loads when restyling is near (see ready()).
 import { BAKED } from "./avatar-baked.js";
 import { renderKey, partKey } from "./avatar-looks.js";
 
