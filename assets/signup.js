@@ -3,6 +3,9 @@
 
 export const SIGNUP_ENDPOINT = "https://siqmhaubpiplaooqhkgz.supabase.co/functions/v1/early-signup";
 const TIMEOUT_MS = 12000;
+/** Which wording sits under the email field, and which privacy policy it links to. Change both when either text changes. */
+export const CONSENT_VERSION = "2026-10-25.1";
+export const POLICY_VERSION = "2026-10-25";
 
 /**
  * Send one sign-up. `website` is the hidden field a person never fills.
@@ -13,7 +16,7 @@ export async function submitSignup(email, website, fetchImpl = fetch) {
     const res = await fetchImpl(SIGNUP_ENDPOINT, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email, website }),
+      body: JSON.stringify({ email, website, consent_version: CONSENT_VERSION, policy_version: POLICY_VERSION }),
       signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(TIMEOUT_MS) : undefined,
     });
     if (res.status === 400) return "invalid";

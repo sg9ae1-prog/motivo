@@ -80,7 +80,7 @@ test("every page has a title, a description and a viewport tag", () => {
 test("every page carries the same relative favicon link as the landing page", () => {
   const iconOf = (html) => html.match(/<link\s+rel="icon"\s+href="([^"]+)"/i)?.[1];
   const landing = iconOf(readPage("index.html"));
-  assert.equal(landing, "assets/img/logo-mark.png");
+  assert.equal(landing, "assets/img/favicon-32.png");
   for (const page of [...PAGES, "404.html"]) {
     const icon = iconOf(readPage(page));
     assert.ok(icon, `${page}: no <link rel="icon">`);
@@ -111,9 +111,8 @@ test("the vendored libraries exist locally", () => {
 test("sharing: landing page has Open Graph and Twitter card tags, legal pages have title and description", () => {
   const meta = (html, key) => html.match(new RegExp(`<meta\\s+(?:property|name)="${key}"\\s+content="([^"]*)"`, "i"))?.[1];
   const landing = readPage("index.html");
-  const lede = landing.match(/<p class="lede[^"]*">([^<]+)<\/p>/)[1];
-  assert.equal(meta(landing, "og:title"), "Motivo — The friend who never gives up on you.");
-  assert.equal(meta(landing, "og:description"), lede);
+  assert.equal(meta(landing, "og:title"), landing.match(/<title>([^<]+)<\/title>/)[1]);
+  assert.equal(meta(landing, "og:description"), meta(landing, "description"));
   assert.equal(meta(landing, "og:url"), SITE_ORIGIN + "/");
   assert.equal(meta(landing, "og:image"), SITE_ORIGIN + "/assets/img/og.png");
   assert.equal(meta(landing, "og:type"), "website");

@@ -1,6 +1,8 @@
 // The landing page's live character and scroll choreography (from the approved prototype).
-// Libraries arrive as classic scripts before this module runs: gsap, ScrollTrigger, confetti, Motivo.
+// Libraries arrive as classic scripts before this module runs: gsap, ScrollTrigger, confetti. Motivo is drawn through the avatar module.
 // Scrolling itself is native: the page snaps one screen at a time, and nothing here smooths or hijacks it.
+import * as avatar from "./avatar.js";
+import { HERO, MINIS, FACES } from "./avatar-looks.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -21,17 +23,11 @@ const desktop = () => innerWidth >= 900;
 }
 
 /* ---------------- the look ---------------- */
-const look = {
-  skinTone: "light", eyes: "cute", eyebrows: "raised", mouth: "openSmile",
-  hair: "short", hairColor: "black", facialHair: "none",
-  clothing: "shirt", clothingColor: "green", accessory: "none", graphic: "none",
-  hat: "none", hatColor: "blue", body: "chest", bgShape: "circle", bgColor: "turqoise",
-  lipColor: "red", lashes: false,
-};
+const look = { ...HERO };
 const svgHost = $("#mo-svg");
 let G = {};
 function draw() {
-  svgHost.innerHTML = Motivo.render(look, 1000);
+  svgHost.innerHTML = avatar.render(look, 1000);
   G = {};
   for (const k of ["skin", "hairb", "hairf", "brows", "eyes", "fhair", "mouth", "acc"]) G[k] = svgHost.querySelector("#bh-" + k);
   G.eyes.innerHTML = '<g class="blink">' + G.eyes.innerHTML + "</g>"; // blinking and gazing must not fight
@@ -44,23 +40,11 @@ function collectPupils() {
 }
 function setPart(kind, name) {
   const grp = kind === "eyes" ? G.eyes : kind === "mouth" ? G.mouth : G.brows;
-  const inner = Motivo.part(kind, name, look);
+  const inner = avatar.part(kind, name, look);
   if (kind === "eyes") { look.eyes = name; grp.innerHTML = '<g class="blink">' + inner + "</g>"; G.blink = grp.firstChild; collectPupils(); }
   else if (kind === "mouth") { look.mouth = name; grp.innerHTML = inner; }
   else { look.eyebrows = name; grp.innerHTML = inner; }
 }
-const FACES = {
-  idle: { eyes: "cute", brows: "raised", mouth: "openSmile" },
-  worried: { eyes: "cute", brows: "concerned", mouth: "sad" },
-  hello: { eyes: "cute", brows: "raised", mouth: "openSmile" },
-  curious: { eyes: "cute", brows: "raised", mouth: "grin" },
-  party: { eyes: "happy", brows: "raised", mouth: "open" },
-  talk: { eyes: "cute", brows: "raised", mouth: "open" },
-  wink: { eyes: "wink", brows: "raised", mouth: "openSmile" },
-  supportive: { eyes: "happy", brows: "raised", mouth: "openSmile" },
-  understanding: { eyes: "cute", brows: "concerned", mouth: "grin" },
-  leader: { eyes: "cute", brows: "serious", mouth: "openSmile" },
-};
 let faceName = "";
 function face(name) {
   if (name === faceName) return;
@@ -285,11 +269,7 @@ function split(el) {
 $$("[data-wave]").forEach((w) => { w.innerHTML = Array.from({ length: 22 }, (_, i) => `<i style="--i:${i};--h:${(.3 + .7 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * .6))).toFixed(2)}"></i>`).join(""); });
 // the small characters inside the phone screens
 {
-  const MINI = {
-    talk: { ...look, eyebrows: "raised", mouth: "open" },
-    studio: { ...look, hair: "bun", hairColor: "brown", accessory: "roundGlasses", clothingColor: "pink", skinTone: "brown", eyes: "happy", mouth: "openSmile" },
-  };
-  $$("[data-mini]").forEach((el) => { el.innerHTML = Motivo.render(MINI[el.dataset.mini], 300); });
+  $$("[data-mini]").forEach((el) => { el.innerHTML = avatar.render(MINIS[el.dataset.mini], 300); });
 }
 // play the phone loops only while they are on screen
 {
@@ -298,6 +278,8 @@ $$("[data-wave]").forEach((w) => { w.innerHTML = Array.from({ length: 22 }, (_, 
 }
 
 /* ---------------- customiser ---------------- */
+// Fetch the drawing library once the page has settled, so restyling answers at once without slowing the first screen.
+addEventListener("load", () => (window.requestIdleCallback ?? setTimeout)(() => avatar.ready().catch(() => {})));
 const OPT = {
   hair: [["short", "Classic Short"], ["bun", "Messy Bun"], ["afro", "Curly Volume"], ["bob", "Straight Bob"], ["mohawk", "Mohawk"], ["pixie", "Pixie Cut"]],
   accessory: [["none", "None"], ["tinyGlasses", "Simple"], ["roundGlasses", "Round"], ["shades", "Shades"]],
@@ -306,14 +288,15 @@ const SW = {
   clothingColor: ["green", "teal", "amber", "pink", "blue", "red", "white", "black"],
   skinTone: ["light", "yellow", "brown", "red", "dark", "black"],
 };
-const bhColor = (field, id) => Motivo.colors[field === "skinTone" ? "skin" : "clothing"][id].base;
+const bhColor = (field, id) => avatar.colors[field === "skinTone" ? "skin" : "clothing"][id].base;
 let persona = null;
 $$("[data-ctl]").forEach((box) => {
   const f = box.dataset.ctl;
   if (OPT[f]) box.innerHTML = OPT[f].map(([id, l]) => `<button type="button" class="chip" aria-pressed="${look[f] === id}" data-v="${id}">${l}</button>`).join("");
   else box.innerHTML = SW[f].map((id) => `<button type="button" class="sw" aria-label="${id}" aria-pressed="${look[f] === id}" data-v="${id}" style="background:${bhColor(f, id)}"></button>`).join("");
-  box.addEventListener("click", (e) => {
+  box.addEventListener("click", async (e) => {
     const b = e.target.closest("button"); if (!b) return;
+    await avatar.ready(); // a restyled Motivo is drawn by the library
     $$("button", box).forEach((x) => x.setAttribute("aria-pressed", x === b));
     look[f] = b.dataset.v;
     const keep = faceName; faceName = ""; draw(); face(keep);

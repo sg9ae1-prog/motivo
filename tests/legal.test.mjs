@@ -7,11 +7,11 @@ const PHRASES = {
   "privacy/": [
     "Magpy", "Israel", "contact@magpy.co", "Google", "Apple", "OpenRouter", "never stored",
     "never used to train", "YouTube", "RevenueCat", "Sentry", "Frankfurt", "early sign-up",
-    "notifications", "13", "delete", "Last updated",
+    "notifications", "16", "delete", "Last updated",
   ],
   "terms/": [
     "Magpy", "Israel", "free trial", "renews automatically", "cancel", "App Store", "Google Play",
-    "not medical", "13", "Last updated",
+    "not medical", "16", "Last updated",
   ],
   "support/": ["contact@magpy.co", "restore purchases", "cancel", "sign in"],
   "delete-account/": ["Settings", "Delete account", "contact@magpy.co", "30 days", "sign in with Apple once more"],

@@ -1,0 +1,16 @@
+# Motivo
+
+> Motivo is a mobile app with a friendly AI companion that helps you reach any goal, such as learning a skill, building a habit or finishing a project. It turns a goal into small daily steps, reminds you when it is time, and adapts when you miss a day. It is coming soon for iPhone and Android and is not in the app stores yet. Free to use, with an optional Pro subscription. Made by Magpy.
+
+## Pages
+
+- [Home and early-access sign-up](https://sg9ae1-prog.github.io/motivo/): what Motivo does and how to hear about the launch
+- [Questions and answers](https://sg9ae1-prog.github.io/motivo/faq/): what it is, who it is for, price, privacy, AI, launch timing, platforms
+- [Privacy policy](https://sg9ae1-prog.github.io/motivo/privacy/): what stays on the phone, what the server keeps, how the AI is used
+- [Terms of use](https://sg9ae1-prog.github.io/motivo/terms/): subscriptions, free trials, acceptable use
+- [Support](https://sg9ae1-prog.github.io/motivo/support/): restoring Pro, cancelling, signing in
+- [Delete your account](https://sg9ae1-prog.github.io/motivo/delete-account/): how to delete your account and what gets deleted
+
+## Contact
+
+contact@magpy.co

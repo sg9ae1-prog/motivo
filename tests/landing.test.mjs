@@ -17,7 +17,7 @@ const js = readFileSync(new URL("../assets/landing.js", import.meta.url), "utf8"
 
 test("hero copy is verbatim", () => {
   assert.ok(text.includes("The friend who never gives up on you."));
-  assert.match(html, /<h1>[\s\S]*<em class="a">gives up on you\.<\/em>[\s\S]*<\/h1>/, "the accent stays on the end of the headline");
+  assert.match(html, /<h2>[\s\S]*<em class="a">gives up on you\.<\/em>[\s\S]*<\/h2>/, "the accent stays on the end of the headline");
   assert.ok(text.includes("Helps you reach your goals, in the way that works best for you."));
   assert.doesNotMatch(text, /Whatever you dream of/, "the old sub-line is gone, share tags included");
 });
@@ -33,8 +33,8 @@ test("the hero opens with a thought, not a spoken line", () => {
 test("one Motivo logo on the first screen, directly above Meet Motivo", () => {
   assert.doesNotMatch(html, /<header\b/, "no top-bar brand to double the first screen's logo");
   assert.equal((html.match(/<div class="brand\b/g) ?? []).length, 1);
-  const copy = section("meet").match(/<div class="meet-copy"[\s\S]*?<\/h2>/)[0];
-  assert.match(copy, /<div class="meet-copy">\s*<div class="brand[^"]*"><img src="assets\/img\/logo-mark\.png"[^>]*alt=""[^>]*><\/div>\s*<h2 id="meet-title"[^>]*>/,
+  const copy = section("meet").match(/<div class="meet-copy"[\s\S]*?<\/h1>/)[0];
+  assert.match(copy, /<div class="meet-copy">\s*<div class="brand[^"]*"><img src="assets\/img\/logo-mark\.png"[^>]*alt=""[^>]*><\/div>\s*<h1 id="meet-title"[^>]*>/,
     "the logo alone: the name is already in Meet Motivo, right below it");
 });
 

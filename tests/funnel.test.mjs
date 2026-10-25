@@ -48,7 +48,7 @@ test("Free shows what really stays free, and what Pro adds, as icons with a word
 test("Privacy is a locked phone and four short tiles", () => {
   const priv = section("privacy");
   const tiles = items(priv.match(/<ul class="tiles"[\s\S]*?<\/ul>/)[0]);
-  assert.deepEqual(tiles.map(label), ["Lives on your phone", "Never kept on our server", "Not used to train AI", "Delete any time"]);
+  assert.deepEqual(tiles.map(label), ["Lives on your phone", "Chats not stored by us", "AI partners promise no training", "Delete any time"]);
   for (const li of tiles) assert.match(li, /<svg[\s\S]*<\/svg>/);
   assert.match(priv, /class="lockphone"/);
   assert.ok(words(priv) <= 26, `Privacy says ${words(priv)} words`);

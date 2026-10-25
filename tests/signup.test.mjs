@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { submitSignup, SIGNUP_ENDPOINT, messageFor } from "../assets/signup.js";
+import { submitSignup, SIGNUP_ENDPOINT, messageFor, CONSENT_VERSION, POLICY_VERSION } from "../assets/signup.js";
 
 /** A stand-in for fetch that records each call and answers with the given status (or throws). */
 function fakeFetch(answer) {
@@ -42,8 +42,8 @@ test("sends exactly {email, website} as JSON to the endpoint", async () => {
   assert.equal(SIGNUP_ENDPOINT, "https://siqmhaubpiplaooqhkgz.supabase.co/functions/v1/early-signup");
   assert.equal(init.method, "POST");
   assert.equal(new Headers(init.headers).get("content-type"), "application/json");
-  assert.deepEqual(JSON.parse(init.body), { email: "sam@example.com", website: "spam.example" });
-  assert.deepEqual(Object.keys(JSON.parse(init.body)).sort(), ["email", "website"]);
+  assert.deepEqual(JSON.parse(init.body), { email: "sam@example.com", website: "spam.example", consent_version: CONSENT_VERSION, policy_version: POLICY_VERSION });
+  assert.deepEqual(Object.keys(JSON.parse(init.body)).sort(), ["consent_version", "email", "policy_version", "website"]);
 });
 
 test("the visitor sees the agreed words for each result", () => {

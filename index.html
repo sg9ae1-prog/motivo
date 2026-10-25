@@ -3,28 +3,85 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Motivo · The friend who never gives up on you</title>
-  <meta name="description" content="Helps you reach your goals, in the way that works best for you. Motivo is your friendly guide. Be first to hear when it launches.">
+  <title>Motivo · A friendly AI companion that helps you reach any goal</title>
+  <meta name="description" content="Motivo is a mobile app with a friendly AI companion that turns any goal into small daily steps. Coming soon to iPhone and Android. Join the early-access list.">
+  <link rel="canonical" href="https://sg9ae1-prog.github.io/motivo/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Motivo">
-  <meta property="og:title" content="Motivo — The friend who never gives up on you.">
-  <meta property="og:description" content="Helps you reach your goals, in the way that works best for you.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Motivo · A friendly AI companion that helps you reach any goal">
+  <meta property="og:description" content="Motivo is a mobile app with a friendly AI companion that turns any goal into small daily steps. Coming soon to iPhone and Android. Join the early-access list.">
   <meta property="og:url" content="https://sg9ae1-prog.github.io/motivo/">
   <meta property="og:image" content="https://sg9ae1-prog.github.io/motivo/assets/img/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Motivo, a friendly AI companion for your goals">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Motivo — The friend who never gives up on you.">
-  <meta name="twitter:description" content="Helps you reach your goals, in the way that works best for you.">
+  <meta name="twitter:title" content="Motivo · A friendly AI companion that helps you reach any goal">
+  <meta name="twitter:description" content="Motivo is a mobile app with a friendly AI companion that turns any goal into small daily steps. Coming soon to iPhone and Android. Join the early-access list.">
   <meta name="twitter:image" content="https://sg9ae1-prog.github.io/motivo/assets/img/og.png">
+  <meta name="twitter:image:alt" content="Motivo, a friendly AI companion for your goals">
   <meta name="theme-color" content="#05080f">
-  <link rel="icon" href="assets/img/logo-mark.png">
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="assets/img/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://sg9ae1-prog.github.io/motivo/#org",
+      "name": "Motivo",
+      "url": "https://sg9ae1-prog.github.io/motivo/",
+      "logo": "https://sg9ae1-prog.github.io/motivo/assets/img/icon-512.png",
+      "email": "contact@magpy.co"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://sg9ae1-prog.github.io/motivo/#site",
+      "name": "Motivo",
+      "url": "https://sg9ae1-prog.github.io/motivo/",
+      "description": "Motivo is a mobile app with a friendly AI companion that turns any goal into small daily steps. Coming soon to iPhone and Android. Join the early-access list.",
+      "publisher": {
+        "@id": "https://sg9ae1-prog.github.io/motivo/#org"
+      },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "MobileApplication",
+      "@id": "https://sg9ae1-prog.github.io/motivo/#app",
+      "name": "Motivo",
+      "url": "https://sg9ae1-prog.github.io/motivo/",
+      "image": "https://sg9ae1-prog.github.io/motivo/assets/img/icon-512.png",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "iOS, Android",
+      "description": "Motivo is a mobile app with a friendly AI companion that helps you reach any goal, such as learning a skill, building a habit or finishing a project. It is coming soon and not available yet; join the early-access list on the website.",
+      "publisher": {
+        "@id": "https://sg9ae1-prog.github.io/motivo/#org"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free to use. An optional Pro subscription adds unlimited chat, voice and more; prices are shown in the store."
+      }
+    }
+  ]
+}
+  </script>
   <!-- The three fonts start downloading as the page opens, so the headline doesn't repaint in a fallback font. -->
   <link rel="preload" href="assets/fonts/baloo-2-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/nunito-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/nunito-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/site.css">
   <link rel="stylesheet" href="assets/landing.css">
+  <!-- Motivo's drawing chain is otherwise found one file at a time; listing it here fetches it alongside the styles. -->
+  <link rel="modulepreload" href="assets/landing.js">
+  <link rel="modulepreload" href="assets/avatar.js">
+  <link rel="modulepreload" href="assets/avatar-looks.js">
+  <link rel="modulepreload" href="assets/avatar-baked.js">
 </head>
 <body class="landing">
   <div class="sky" id="sky" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
@@ -66,8 +123,9 @@
       <div class="hero-char"><div class="anchor" data-anchor data-say-m="top" data-say-d="top" data-say="Hi! I'm Motivo."></div></div>
       <div class="meet-copy">
         <div class="brand line"><img src="assets/img/logo-mark.png" alt="" width="36" height="36"></div>
-        <h2 id="meet-title" class="line">Meet <em class="t">Motivo.</em></h2>
+        <h1 id="meet-title" class="line">Meet <em class="t">Motivo.</em></h1>
         <p class="line">Your friendly guide.</p>
+        <p class="line meet-what">A mobile app with an AI companion that helps you reach any goal — a skill, a habit, a project.</p>
       </div>
       <div class="scrollcue" aria-hidden="true"></div>
     </section>
@@ -83,7 +141,7 @@
         </div>
       </div>
       <div class="hook" id="hook">
-        <h1><span class="line">The friend who never <em class="a">gives up on you.</em></span></h1>
+        <h2><span class="line">The friend who never <em class="a">gives up on you.</em></span></h2>
         <p class="lede line">Helps you reach your goals, in the way that works best for you.</p>
       </div>
     </section>
@@ -270,7 +328,7 @@
           <h2 id="free-title" data-split>Free, <em class="a">honestly.</em></h2>
         </div>
         <div class="plans">
-          <div class="plan free"><h3>Free, forever</h3><ul class="icons"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span>Habits</span></li><li><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tasks</span></li><li><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg><span>Streaks</span></li><li><svg class="i" aria-hidden="true"><use href="#i-sun"/></svg><span>Morning hello</span></li><li><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg><span>A little chat</span></li></ul></div>
+          <div class="plan free"><h3>Free to use</h3><ul class="icons"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span>Habits</span></li><li><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tasks</span></li><li><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg><span>Streaks</span></li><li><svg class="i" aria-hidden="true"><use href="#i-sun"/></svg><span>Morning hello</span></li><li><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg><span>A little chat</span></li></ul></div>
           <div class="plan pro"><h3>Pro adds</h3><ul class="icons"><li><svg class="i" aria-hidden="true"><use href="#i-chats"/></svg><span>Unlimited chat</span></li><li><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span>Voice</span></li><li><svg class="i" aria-hidden="true"><use href="#i-brain"/></svg><span>Memory</span></li><li><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg><span>Personalities</span></li><li><svg class="i" aria-hidden="true"><use href="#i-book"/></svg><span>Task guides</span></li></ul>
             <p class="trial">Try Pro free first.</p></div>
         </div>
@@ -287,7 +345,7 @@
         </div>
         <div>
           <div class="lockphone" aria-hidden="true"><svg class="i"><use href="#i-lock"/></svg></div>
-          <ul class="tiles" data-fit><li><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><span>Lives on your phone</span></li><li><svg class="i" aria-hidden="true"><use href="#i-noserver"/></svg><span>Never kept on our server</span></li><li><svg class="i" aria-hidden="true"><use href="#i-notrain"/></svg><span>Not used to train AI</span></li><li><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg><span>Delete any time</span></li></ul>
+          <ul class="tiles" data-fit><li><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><span>Lives on your phone</span></li><li><svg class="i" aria-hidden="true"><use href="#i-noserver"/></svg><span>Chats not stored by us</span></li><li><svg class="i" aria-hidden="true"><use href="#i-notrain"/></svg><span>AI partners promise no training</span></li><li><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg><span>Delete any time</span></li></ul>
           <a class="readmore" href="privacy/">Privacy policy &rarr;</a>
         </div>
       </div>
@@ -298,16 +356,16 @@
       <div class="lw">
         <div class="anchor" data-anchor data-say-m="top" data-say-d="top"></div>
         <h2 id="get-title" data-split>Be <em class="a">first.</em></h2>
-        <p class="slede">Motivo isn't in the stores yet. Leave your email and hear the day it lands.</p>
+        <p class="slede">Motivo is an AI companion, and it isn't in the stores yet. Leave your email and hear the day it lands.</p>
         <form class="signup" data-signup method="post">
           <label class="sr" for="email-get">Your email</label>
           <div class="signup-row">
-            <input id="email-get" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email">
+            <input id="email-get" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" placeholder="your email" aria-describedby="consent-get">
             <button class="be-first" type="submit">Be first</button>
           </div>
           <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
           <p class="signup-status" data-status aria-live="polite"></p>
-          <p class="signup-note">We'll only write when Motivo launches.</p>
+          <p class="signup-note" id="consent-get">We'll only write when Motivo launches. One email, no more. You must be 16 or older. <a href="privacy/">Privacy policy</a>.</p>
         </form>
       </div>
     </section>
@@ -315,6 +373,7 @@
 
   <footer class="site-footer"><div class="wrap">
     <nav aria-label="Legal">
+      <a href="faq/">Questions</a>
       <a href="privacy/">Privacy</a>
       <a href="terms/">Terms</a>
       <a href="support/">Support</a>
@@ -330,7 +389,7 @@
   <script src="assets/vendor/gsap.min.js"></script>
   <script src="assets/vendor/ScrollTrigger.min.js"></script>
   <script src="assets/vendor/confetti.browser.min.js"></script>
-  <script src="assets/bigheads.js"></script>
   <script type="module" src="assets/landing.js"></script>
+  <script type="module" src="assets/motion-toggle.js"></script>
 </body>
 </html>
